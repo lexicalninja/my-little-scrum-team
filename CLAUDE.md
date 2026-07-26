@@ -1,31 +1,37 @@
 # Development Guide
 
-This repo ships the same scrum team through two surfaces that share one set of
-skills. Most of the confusing parts of this codebase follow from that, so read
-this before changing agent prompts.
+This repo ships the same scrum team through three surfaces that share one set
+of skills. Most of the confusing parts of this codebase follow from that, so
+read this before changing agent prompts.
 
 ## Layout
 
 ```
 agents/              Agent definitions for the Claude Code plugin (markdown)
-skills/              Skill definitions (39) — SHARED, single source of truth
+skills/              Skill definitions (40) — SHARED, single source of truth
 commands/            Slash commands (/build, /convert-to-extension)
-templates/           Specification, task breakdown, decision record
+templates/           SHARED: specification, task breakdown, decision record, scaffold
 .claude-plugin/      Plugin manifest and marketplace entry
 packages/mls-app/    Standalone CLI + MCP server (TypeScript)
+packages/mls-pi/     pi.dev agent-harness extension (TypeScript)
 ```
 
-`skills/` and `templates/` exist exactly once. `packages/mls-app` resolves them
-from the repo root at runtime — it does not carry copies. See
-`packages/mls-app/src/skills/loader.ts`.
+`skills/` and `templates/` exist exactly once. Both packages resolve them from
+the repo root at runtime — neither carries copies. See
+`packages/mls-app/src/skills/loader.ts` and `resolveResourceDir` in
+`packages/mls-pi/.pi/extensions/mls/index.ts`.
 
-## The two surfaces
+`packages/mls-pi/agents/` is deliberately NOT shared: pi agents use `mls-*`
+names and a `tools:` frontmatter field that Claude Code agents don't have.
 
-| | Plugin (`agents/*.md`) | App (`packages/mls-app/src/agents/*.ts`) |
-|---|---|---|
-| Runs in | Claude Code | Node CLI / MCP server |
-| Orchestration | The agent, guided by its prompt | `src/orchestrator/phases.ts` |
-| Skill delivery | Model-invoked by description | Always concatenated into the system prompt |
+## The three surfaces
+
+| | Plugin (`agents/*.md`) | App (`packages/mls-app`) | Pi (`packages/mls-pi`) |
+|---|---|---|---|
+| Runs in | Claude Code | Node CLI / MCP server | [pi.dev](https://pi.dev) harness |
+| Orchestration | The agent, guided by its prompt | `src/orchestrator/phases.ts` | `.pi/extensions/mls/orchestrator/` |
+| Skill delivery | Model-invoked by description | Always concatenated into the prompt | Always concatenated, via `AGENT_SKILLS` |
+| State | None | `src/state/` (JSON) | SQLite (`better-sqlite3`) |
 
 ## Why the prompts differ (read before "fixing" them)
 
@@ -81,19 +87,23 @@ Some prompt text is a contract with the parser, not advice:
   category names are referenced by the gate prompt in
   `src/orchestrator/quality-gates.ts`.
 
-## Working on the app
+## Working on the packages
 
 ```bash
-cd packages/mls-app
+cd packages/mls-app   # or packages/mls-pi
 npm install
-npm run lint    # tsc --noEmit
-npm test        # vitest, 146 tests
 npm run build
+npm test              # mls-app: 146 tests · mls-pi: 794 tests
 ```
 
-The test suite mocks `loadAllSkills`, so it will **not** catch a broken skills
-path. If you change how skills resolve, verify against the built output
-directly rather than trusting a green suite.
+Neither suite meaningfully covers resource resolution — `mls-app` mocks
+`loadAllSkills` outright. If you change how skills or templates resolve, verify
+against the built output directly rather than trusting a green suite.
+
+`packages/mls-pi` depends on `better-sqlite3` and (via vitest 4) on native
+rolldown bindings. If `npm test` dies with `Cannot find module
+'./rolldown-binding.*.node'`, npm skipped a platform-specific optional
+dependency — delete `node_modules` *and* `package-lock.json`, then reinstall.
 
 ## When making changes
 

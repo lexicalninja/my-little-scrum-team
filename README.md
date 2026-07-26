@@ -34,14 +34,16 @@ back a standalone CLI:
 ```
 .claude-plugin/      Plugin manifest and marketplace entry
 agents/              Agent definitions (7)
-skills/              Skill definitions (39) — shared, single source of truth
+skills/              Skill definitions (40) — shared, single source of truth
 commands/            Slash commands (/build, /convert-to-extension)
-templates/           Specification, task breakdown, decision record
+templates/           Specification, task breakdown, decision record, scaffold
 packages/mls-app/    Standalone CLI + MCP server (see its README)
+packages/mls-pi/     pi.dev harness extension (see its README)
 ```
 
-`skills/` and `templates/` are deliberately not duplicated inside
-`packages/mls-app` — the CLI resolves them from the repo root at runtime.
+`skills/` and `templates/` are deliberately not duplicated inside the packages —
+both resolve them from the repo root at runtime. See `CLAUDE.md` for why the
+agent prompts intentionally differ between surfaces.
 
 ## Architecture
 

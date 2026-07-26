@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MLS Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark-dimmed.min.css">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="parsers.js"></script>
+  <script src="handlers.js"></script>
+  <script src="app.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3/dist/cdn.min.js"></script>
+</head>
+<body>
+
+<div x-data="mls()" x-init="connect()">
+
+  <!-- Top Bar -->
+  <header class="top">
+    <h1>MLS Dashboard</h1>
+    <span class="badge" :class="status" x-text="status.toUpperCase()"></span>
+    <template x-if="availableSessions.length > 1">
+      <select class="session-selector" @change="switchSession($event.target.value)" :value="selectedSessionId || ''">
+        <option value="">All Sessions</option>
+        <template x-for="s in availableSessions" :key="s.sessionId">
+          <option :value="s.sessionId" x-text="s.sessionId.slice(0, 8) + (s.ended ? ' (done)' : ' (live)')"></option>
+        </template>
+      </select>
+    </template>
+    <div class="progress-bar">
+      <div class="progress-segments">
+        <template x-for="(seg, i) in progressSegments" :key="i">
+          <div class="seg" :class="seg.status" :title="seg.label"></div>
+        </template>
+      </div>
+      <span class="progress-label" x-text="`${completedCount}/${totalTasks}`"></span>
+    </div>
+  </header>
+
+  <div class="main">
+
+    <!-- Left: Agent / Task Area (50%) -->
+    <section class="agent-area">
+      <div class="orch-header">
+        <span>ORCHESTRATOR</span>
+        <span class="orch-stat" x-text="`${completedCount}/${totalTasks} tasks`"></span>
+        <span class="orch-phase" x-text="progressLabel || 'Idle'"></span>
+      </div>
+
+      <div class="orch-content" x-ref="orchScroll">
+
+      <!-- Untasked agents (spec-writer, etc.) -->
+      <template x-for="a in untaskedAgents" :key="a.id">
+        <div class="agent-card" x-transition:enter="agent-enter" x-transition:leave="agent-leave">
+          <div class="agent-header">
+            <span class="agent-spinner" x-text="spinnerFrame"></span>
+            <span class="agent-name" x-text="shortAgent(a.agent)"></span>
+            <span class="agent-elapsed" x-text="agentElapsed(a)"></span>
+            <span class="agent-tools" x-show="a.toolCount > 0" x-text="`${a.toolCount} tools`"></span>
+          </div>
+          <div class="grabbed-progress" x-show="a.progress" x-text="a.progress"></div>
+        </div>
+      </template>
+
+      <!-- Untasked history -->
+      <template x-for="a in untaskedHistory" :key="a.id">
+        <div class="history-row untasked">
+          <span class="history-agent" x-text="shortAgent(a.agent)"></span>
+          <span class="history-duration" x-text="a.duration < 60 ? `${a.duration}s` : `${Math.floor(a.duration/60)}m${a.duration%60}s`"></span>
+          <span class="history-cost" x-show="a.cost > 0" x-text="`$${a.cost.toFixed(4)}`"></span>
+        </div>
+      </template>
+
+      <!-- Gate Status Cards -->
+      <template x-for="g in gates" :key="g.gate + g.timestamp">
+        <div class="gate-card" :class="gateCardClass(g.status)">
+          <div class="gate-header">
+            <span class="gate-icon" x-text="gateIcon(g.status)"></span>
+            <span class="gate-name" x-text="g.gate.replace('post-', '').replace('on-', '').toUpperCase()"></span>
+            <span class="gate-status" x-text="g.status"></span>
+            <span class="gate-rounds" x-show="g.feedbackRounds > 0" x-text="`${g.feedbackRounds} rounds`"></span>
+            <span class="gate-auto" x-show="g.autonomous">(auto)</span>
+          </div>
+          <div class="gate-summary" x-show="g.summary" x-text="g.summary"></div>
+        </div>
+      </template>
+
+      <!-- Unified Task List -->
+      <div class="task-list">
+        <template x-for="t in taskView" :key="t.id">
+          <div class="task-item" :class="{ [t.status]: true, phase: t.isPhase }">
+            <div class="task-header">
+              <span class="task-icon" x-text="taskIcon(t.status)"></span>
+              <span class="task-id" x-show="!t.isPhase" x-text="t.id"></span>
+              <span class="task-title" x-text="t.title || ''"></span>
+              <span class="task-tokens" x-show="t.tokens > 0" x-text="fmtTokens(t.tokens)"></span>
+            </div>
+
+            <!-- Inline test results -->
+            <div class="task-test-wrap" :class="{ open: t._testsOpen }" x-show="t.latestTest" @click.stop="t._testsOpen = !t._testsOpen">
+              <div class="task-tests">
+                <span class="task-test-icon" :class="t.latestTest?.exitCode === 0 ? 'pass' : 'fail'"
+                      x-text="t.latestTest?.exitCode === 0 ? '✓' : '✗'"></span>
+                <span class="task-test-summary"
+                      :class="t.latestTest?.results?.summary?.failed > 0 ? 'fail' : 'pass'"
+                      x-text="t.latestTest ? `${t.latestTest.results.summary.passed}/${t.latestTest.results.summary.total}` : ''"></span>
+                <span class="task-test-duration" x-text="t.latestTest?.results?.summary?.duration || ''"></span>
+                <span class="task-test-runs" x-show="t.testRuns.length > 1">
+                  <template x-for="r in t.testRuns.slice(-8)" :key="r.runNumber">
+                    <span class="history-dot" :class="r.exitCode === 0 ? 'pass' : 'fail'"></span>
+                  </template>
+                </span>
+              </div>
+              <template x-if="t._testsOpen && t.latestTest">
+                <div class="task-test-detail" x-transition>
+                  <template x-for="file in t.latestTest.results.files" :key="file.path">
+                    <div class="task-test-file" :class="file.status">
+                      <span x-text="file.status === 'pass' ? '✓' : '✗'" :class="file.status"></span>
+                      <span x-text="file.path"></span>
+                      <span class="task-test-file-count" x-text="`${file.testCount - file.failCount}/${file.testCount}`"></span>
+                      <template x-for="ft in file.tests" :key="ft.name">
+                        <div class="task-test-case fail">
+                          <span>✗</span> <span x-text="ft.name"></span>
+                          <div class="task-test-error" x-show="ft.error" x-text="ft.error"></div>
+                        </div>
+                      </template>
+                    </div>
+                  </template>
+                </div>
+              </template>
+            </div>
+
+            <!-- Active agent working on this task -->
+            <div class="task-agent active" x-show="t.activeAgent" x-transition>
+              <span class="agent-spinner" x-text="spinnerFrame"></span>
+              <span class="agent-name" x-text="shortAgent(t.activeAgent?.agent)"></span>
+              <span class="agent-elapsed" x-text="agentElapsed(t.activeAgent || {})"></span>
+              <span class="agent-tools" x-show="t.activeAgent?.toolCount > 0" x-text="`${t.activeAgent?.toolCount} tools`"></span>
+              <div class="grabbed-progress" x-show="t.activeAgent?.progress" x-text="t.activeAgent?.progress"></div>
+            </div>
+
+            <!-- Historical agents that worked on this task -->
+            <template x-for="h in t.agentHistory" :key="h.id">
+              <div class="task-agent done">
+                <span class="history-agent" x-text="shortAgent(h.agent)"></span>
+                <span class="history-duration" x-text="h.duration < 60 ? `${h.duration}s` : `${Math.floor(h.duration/60)}m${h.duration%60}s`"></span>
+                <span class="history-cost" x-show="h.cost > 0" x-text="`$${h.cost.toFixed(4)}`"></span>
+              </div>
+            </template>
+          </div>
+        </template>
+      </div>
+
+      </div><!-- /orch-content -->
+
+    </section>
+
+    <!-- Right: Event Log (50%) -->
+    <section class="log">
+      <h2>Event Log</h2>
+      <div class="event-list" x-ref="logScroll">
+        <template x-for="(ev, i) in events" :key="i">
+          <div>
+            <div class="event" :class="{ ...eventClasses(ev), expanded: ev.open }" @click="ev.detail && (ev.open = !ev.open)">
+              <span class="twirl" x-show="ev.detail" x-text="ev.open ? '▼' : '▶'"></span>
+              <span class="no-twirl" x-show="!ev.detail"></span>
+              <span class="time" x-text="fmt(ev.timestamp)"></span>
+              <span class="tag" :class="ev.tagClass" x-text="`[${ev.tag}]`"></span>
+              <span class="agent-log-name" x-show="ev.raw?.agent" x-text="ev.raw?.agent"></span>
+              <span class="msg" x-text="ev.summary"></span>
+              <span class="cost" x-show="ev.cost" x-text="ev.cost"></span>
+            </div>
+            <template x-if="ev.detail && ev.open">
+              <div class="detail" x-html="highlight(ev.detail)" x-transition></div>
+            </template>
+          </div>
+        </template>
+      </div>
+    </section>
+
+    <!-- Right Column: Tests + Usage -->
+    <div class="right-col">
+    <section class="tests">
+      <div class="tests-header">
+        <span>TESTS</span>
+        <span class="tests-run" x-show="latestTestRun" x-text="`Run ${latestTestRun?.runNumber}`"></span>
+        <span class="tests-summary" x-show="testSummary"
+              :class="testSummary?.failed > 0 ? 'has-failures' : 'all-pass'"
+              x-text="testSummary ? `${testSummary.passed}/${testSummary.total}` : ''"></span>
+      </div>
+
+      <div class="tests-counts" x-show="testSummary">
+        <span class="test-count pass" x-text="`✓ ${testSummary?.passed || 0}`"></span>
+        <span class="test-count fail" x-show="testSummary?.failed > 0" x-text="`✗ ${testSummary?.failed || 0}`"></span>
+        <span class="test-count total" x-text="`(${testSummary?.total || 0} tests)`"></span>
+        <span class="test-duration" x-text="testSummary?.duration || ''"></span>
+      </div>
+
+      <div class="tests-empty" x-show="!latestTestRun">
+        <span class="tests-empty-icon">○</span>
+        <span>Waiting for test run...</span>
+      </div>
+
+      <div class="test-tree" x-ref="testScroll" x-show="latestTestRun">
+        <template x-for="file in testTree" :key="file.path">
+          <div class="test-file" :class="file.status">
+            <div class="test-file-header" @click="file.expanded = !file.expanded">
+              <span class="test-file-icon" x-text="file.status === 'pass' ? '✓' : '✗'"></span>
+              <span class="test-file-path" x-text="file.path" :title="file.path"></span>
+              <span class="test-file-count" x-text="`${file.testCount - file.failCount}/${file.testCount}`"></span>
+              <span class="test-file-duration" x-text="file.duration"></span>
+              <span class="test-history" x-show="file.history.length > 1">
+                <template x-for="h in file.history.slice(-10)" :key="h.runNumber">
+                  <span class="history-dot" :class="h.status" :title="`Run ${h.runNumber}: ${h.status}`"></span>
+                </template>
+              </span>
+            </div>
+            <template x-if="file.expanded && file.tests.length > 0">
+              <div class="test-cases" x-transition>
+                <template x-for="t in file.tests" :key="t.name">
+                  <div class="test-case" :class="t.status">
+                    <span class="test-case-icon" x-text="t.status === 'pass' ? '✓' : '✗'"></span>
+                    <span class="test-case-name" x-text="t.name"></span>
+                    <div class="test-case-error" x-show="t.error" x-text="t.error"></div>
+                  </div>
+                </template>
+              </div>
+            </template>
+          </div>
+        </template>
+      </div>
+    </section>
+
+    <!-- Right: Token Usage (below tests) -->
+    <section class="usage">
+      <div class="usage-header">
+        <span>TOKEN USAGE</span>
+        <span class="usage-total" x-text="fmtTokens(totalTokens)"></span>
+        <span class="usage-elapsed" x-text="elapsed"></span>
+      </div>
+
+      <div class="usage-agents">
+        <template x-for="a in agentTypeList" :key="a.name">
+          <div class="usage-agent">
+            <span class="usage-agent-name" x-text="a.displayName"></span>
+            <span class="usage-agent-runs" x-text="`×${a.runs}`"></span>
+            <span class="usage-agent-tokens" x-text="fmtTokens(a.tokens)"></span>
+            <span class="usage-agent-cost" x-show="a.cost > 0" x-text="`$${a.cost.toFixed(3)}`"></span>
+          </div>
+        </template>
+      </div>
+
+      <div class="usage-summary">
+        <div class="usage-stat">Agents: <span class="val" x-text="stats.agents"></span></div>
+        <div class="usage-stat">LLM calls: <span class="val" x-text="stats.agentLlmCalls"></span></div>
+        <div class="usage-stat">Exec: <span class="val" x-text="stats.exec"></span></div>
+        <div class="usage-stat" x-show="totalCost > 0">Cost: <span class="val" x-text="`$${totalCost.toFixed(2)}`"></span></div>
+      </div>
+    </section>
+    </div><!-- /right-col -->
+
+  </div>
+
+</div>
+
+</body>
+</html>

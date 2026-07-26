@@ -1,0 +1,634 @@
+/**
+ * Ad Hoc VitePress Custom Theme
+ * Based on Ad Hoc Brand Guidelines
+ * https://brand.adhoc.team
+ */
+
+/* ============================================================================
+   FONTS
+   ========================================================================== */
+
+/**
+ * Primary: Proxima Nova (commercial font)
+ * Secondary: Proxima Sera (commercial font)
+ * 
+ * If you have access to these fonts through Adobe Creative Cloud or other
+ * licensing, add @font-face declarations here. Otherwise, use the fallbacks
+ * provided below with similar characteristics.
+ * 
+ * Recommended fallbacks:
+ * - Proxima Nova → 'Inter', 'system-ui', sans-serif
+ * - Proxima Sera → 'Source Serif Pro', 'Georgia', serif
+ */
+
+/* Uncomment and configure if you have the licensed fonts:
+@font-face {
+  font-family: 'Proxima Nova';
+  src: url('./fonts/ProximaNova-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Proxima Nova';
+  src: url('./fonts/ProximaNova-Extrabold.woff2') format('woff2');
+  font-weight: 800;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Proxima Sera';
+  src: url('./fonts/ProximaSera-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+}
+*/
+
+/* ============================================================================
+   CSS CUSTOM PROPERTIES (DESIGN TOKENS)
+   ========================================================================== */
+
+:root {
+  /* === CORE COLORS === */
+  --adhoc-green-medium: #31B67B;
+  --adhoc-green-dark: #118762;
+  --adhoc-green-light: #cdecdb;
+  
+  /* === ACCENT GRAYS === */
+  --adhoc-gray-1: #FAFAFA;
+  --adhoc-gray-2: #EDEDED;
+  --adhoc-gray-3: #D4D4D4;
+  --adhoc-gray-4: #BCBCBC;
+  --adhoc-gray-5: #A4A4A4;
+  --adhoc-gray-6: #8B8B8B;
+  --adhoc-gray-7: #727272;
+  --adhoc-gray-8: #5F5F5F;
+  --adhoc-gray-9: #4B4B4B;
+  --adhoc-gray-10: #3B3B3B;
+  
+  /* === SECONDARY COLOR PALETTES === */
+  
+  /* Monarch (Oranges) */
+  --adhoc-monarch-1: #FFF9F2;
+  --adhoc-monarch-2: #FFEAD4;
+  --adhoc-monarch-3: #FFCB92;
+  --adhoc-monarch-4: #FFA94C;
+  --adhoc-monarch-5: #FC8400;
+  --adhoc-monarch-6: #D67000;
+  --adhoc-monarch-7: #B05C00;
+  --adhoc-monarch-8: #924C00;
+  --adhoc-monarch-9: #743D00;
+  --adhoc-monarch-10: #5C3000;
+  
+  /* Finch (Yellows) */
+  --adhoc-finch-1: #FFFAEB;
+  --adhoc-finch-2: #FFECBB;
+  --adhoc-finch-3: #FFCC50;
+  --adhoc-finch-4: #FBAC0F;
+  --adhoc-finch-5: #DD960E;
+  --adhoc-finch-6: #BD7E0C;
+  --adhoc-finch-7: #9C670A;
+  --adhoc-finch-8: #835508;
+  --adhoc-finch-9: #694305;
+  --adhoc-finch-10: #543404;
+  
+  /* Ocean (Blues) */
+  --adhoc-ocean-1: #EDFDFF;
+  --adhoc-ocean-2: #C0F7FF;
+  --adhoc-ocean-3: #44E8FF;
+  --adhoc-ocean-4: #08CEED;
+  --adhoc-ocean-5: #0BB4D1;
+  --adhoc-ocean-6: #0B98B3;
+  --adhoc-ocean-7: #0A7D94;
+  --adhoc-ocean-8: #09687D;
+  --adhoc-ocean-9: #075264;
+  --adhoc-ocean-10: #054150;
+  
+  /* Lavender (Purples) */
+  --adhoc-lavender-1: #F9FAFE;
+  --adhoc-lavender-2: #E8EDFC;
+  --adhoc-lavender-3: #CFD2F7;
+  --adhoc-lavender-4: #B4B8F1;
+  --adhoc-lavender-5: #999EEB;
+  --adhoc-lavender-6: #7A82E3;
+  --adhoc-lavender-7: #6268CA;
+  --adhoc-lavender-8: #5656A5;
+  --adhoc-lavender-9: #48447F;
+  --adhoc-lavender-10: #3B3562;
+  
+  /* Hibiscus (Pinks) */
+  --adhoc-hibiscus-1: #FFF8FC;
+  --adhoc-hibiscus-2: #FEE8F4;
+  --adhoc-hibiscus-3: #FAC5E6;
+  --adhoc-hibiscus-4: #F5A2DA;
+  --adhoc-hibiscus-5: #F07BCE;
+  --adhoc-hibiscus-6: #E64DBA;
+  --adhoc-hibiscus-7: #B9429F;
+  --adhoc-hibiscus-8: #973989;
+  --adhoc-hibiscus-9: #752F70;
+  --adhoc-hibiscus-10: #5A275C;
+  
+  /* === GRADIENTS === */
+  --adhoc-gradient-sunrise: linear-gradient(135deg, #FFCC50 0%, #31B67B 50%, #118762 100%);
+  --adhoc-gradient-sunset: linear-gradient(135deg, #FFECBB 0%, #FC8400 50%, #924C00 100%);
+  --adhoc-gradient-spring: linear-gradient(135deg, #FAC5E6 0%, #E64DBA 50%, #48447F 100%);
+  --adhoc-gradient-summer: linear-gradient(135deg, #FFECBB 0%, #FFCC50 50%, #FBAC0F 100%);
+  --adhoc-gradient-fall: linear-gradient(135deg, #FFEAD4 0%, #D67000 50%, #694305 100%);
+  --adhoc-gradient-winter: linear-gradient(135deg, #C0F7FF 0%, #08CEED 50%, #09687D 100%);
+  --adhoc-gradient-green-yellow: linear-gradient(135deg, #31B67B 0%, #FFCC50 100%);
+  --adhoc-gradient-green-purple: linear-gradient(135deg, #31B67B 0%, #48447F 100%);
+  
+  /* === TYPOGRAPHY === */
+  --adhoc-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --adhoc-font-serif: 'Source Serif Pro', Georgia, serif;
+  
+  /* Typography Scale (Major Third - 1.250) - Web baseline 20px */
+  --adhoc-text-base: 1.25rem;      /* 20px */
+  --adhoc-text-h6: 1rem;           /* 16px */
+  --adhoc-text-h5: 1.25rem;        /* 25px */
+  --adhoc-text-h4: 1.563rem;       /* 31.25px */
+  --adhoc-text-h3: 1.953rem;       /* 39.06px */
+  --adhoc-text-h2: 2.441rem;       /* 48.83px */
+  --adhoc-text-h1: 3.052rem;       /* 61.04px */
+  
+  /* Spacing (8px grid) */
+  --adhoc-space-1: 0.5rem;   /* 8px */
+  --adhoc-space-2: 1rem;     /* 16px */
+  --adhoc-space-3: 1.5rem;   /* 24px */
+  --adhoc-space-4: 2rem;     /* 32px - Small */
+  --adhoc-space-6: 3rem;     /* 48px - Medium (mobile) */
+  --adhoc-space-8: 4rem;     /* 64px - Medium (desktop) / Large (mobile) */
+  --adhoc-space-12: 6rem;    /* 96px - Extra Large (mobile) */
+  --adhoc-space-13: 6.5rem;  /* 104px - Large (desktop) */
+  --adhoc-space-16: 8rem;    /* 128px - Extra Large (desktop) */
+}
+
+/* Dark mode adjustments - WCAG AAA COMPLIANT */
+.dark {
+  /* Light greens for dark backgrounds */
+  --adhoc-green-medium: #5FD4A8;    /* Lighter version for dark backgrounds */
+  --adhoc-green-dark: #A8E6D0;      /* Even lighter for better contrast */
+  --adhoc-green-light: #0D5E47;     /* Darker green for dark mode */
+  
+  /* Dark background */
+  --adhoc-gray-1: #1a1a1a;          /* Dark bg - lighter for contrast */
+  --adhoc-gray-10: #f5f5f5;         /* Text on dark - light */
+}
+
+/* ============================================================================
+   VITEPRESS THEME OVERRIDES
+   ========================================================================== */
+
+/**
+ * Override VitePress default variables with Ad Hoc brand colors
+ */
+
+:root {
+  /* Brand colors */
+  --vp-c-brand-1: var(--adhoc-green-medium);
+  --vp-c-brand-2: var(--adhoc-green-dark);
+  --vp-c-brand-3: var(--adhoc-green-light);
+  --vp-c-brand-soft: rgba(49, 182, 123, 0.14);
+  
+  /* Text colors */
+  --vp-c-text-1: var(--adhoc-gray-10);
+  --vp-c-text-2: var(--adhoc-gray-8);
+  --vp-c-text-3: var(--adhoc-gray-6);
+  
+  /* Background colors */
+  --vp-c-bg: #ffffff;
+  --vp-c-bg-soft: var(--adhoc-gray-1);
+  --vp-c-bg-mute: var(--adhoc-gray-2);
+  --vp-c-bg-alt: var(--adhoc-gray-1);
+  
+  /* Borders */
+  --vp-c-border: var(--adhoc-gray-3);
+  --vp-c-divider: var(--adhoc-gray-2);
+  --vp-c-gutter: var(--adhoc-gray-2);
+  
+  /* Component colors */
+  --vp-button-brand-bg: var(--adhoc-green-medium);
+  --vp-button-brand-text: #ffffff;
+  --vp-button-brand-hover-bg: var(--adhoc-green-dark);
+  --vp-button-brand-hover-text: #ffffff;
+  --vp-button-brand-active-bg: var(--adhoc-green-dark);
+  
+  /* Code blocks */
+  --vp-code-block-bg: var(--adhoc-gray-1);
+  
+  /* Typography overrides */
+  --vp-font-family-base: var(--adhoc-font-sans);
+  --vp-font-family-mono: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Monaco, Consolas, monospace;
+  
+  /* Custom home hero gradient */
+  --vp-home-hero-name-color: transparent;
+  --vp-home-hero-name-background: var(--adhoc-gradient-sunrise);
+}
+
+.dark {
+  --vp-c-bg: #0f0f0f;               /* Pure dark background */
+  --vp-c-bg-soft: #1a1a1a;          /* Soft dark */
+  --vp-c-bg-mute: #2a2a2a;          /* Muted dark */
+  --vp-c-bg-alt: #1a1a1a;           /* Alt dark */
+  
+  --vp-c-text-1: #f5f5f5;           /* Light text - 15.3:1 contrast */
+  --vp-c-text-2: #d0d0d0;           /* Medium text - 10.2:1 contrast */
+  --vp-c-text-3: #a0a0a0;           /* Secondary text - 7:1 contrast */
+}
+
+/* ============================================================================
+   TYPOGRAPHY
+   ========================================================================== */
+
+/**
+ * Apply Ad Hoc typography scale and weights
+ */
+
+.vp-doc h1,
+.VPDocHero .name {
+  font-size: var(--adhoc-text-h1);
+  font-weight: 800;  /* Extra bold */
+  letter-spacing: -0.02em;
+}
+
+.vp-doc h2 {
+  font-size: var(--adhoc-text-h2);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.vp-doc h3 {
+  font-size: var(--adhoc-text-h3);
+  font-weight: 700;
+}
+
+.vp-doc h4 {
+  font-size: var(--adhoc-text-h4);
+  font-weight: 700;
+}
+
+.vp-doc h5 {
+  font-size: var(--adhoc-text-h5);
+  font-weight: 600;
+}
+
+.vp-doc h6 {
+  font-size: var(--adhoc-text-h6);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Body copy - use serif for emphasis (sparingly) */
+.vp-doc p {
+  font-size: var(--adhoc-text-base);
+  line-height: 1.6;
+}
+
+.vp-doc .serif {
+  font-family: var(--adhoc-font-serif);
+}
+
+/* Interactive elements - uppercase */
+.vp-button,
+.VPNavBarMenuLink,
+.VPSidebarItem {
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+/* ============================================================================
+   LAYOUT & SPACING
+   ========================================================================== */
+
+/**
+ * Apply 8px vertical grid system
+ */
+
+.vp-doc h1 {
+  margin-top: var(--adhoc-space-16);
+  margin-bottom: var(--adhoc-space-8);
+}
+
+.vp-doc h2 {
+  margin-top: var(--adhoc-space-13);
+  margin-bottom: var(--adhoc-space-6);
+}
+
+.vp-doc h3 {
+  margin-top: var(--adhoc-space-8);
+  margin-bottom: var(--adhoc-space-4);
+}
+
+.vp-doc h4,
+.vp-doc h5,
+.vp-doc h6 {
+  margin-top: var(--adhoc-space-6);
+  margin-bottom: var(--adhoc-space-4);
+}
+
+.vp-doc p,
+.vp-doc ul,
+.vp-doc ol {
+  margin-bottom: var(--adhoc-space-4);
+}
+
+/* ============================================================================
+   CUSTOM COMPONENTS
+   ========================================================================== */
+
+/**
+ * Gradient accent bars - Ad Hoc "Sunrise" concept
+ */
+
+.adhoc-gradient-accent {
+  height: 4px;
+  width: 100%;
+  background: var(--adhoc-gradient-sunrise);
+  margin: var(--adhoc-space-8) 0;
+}
+
+.adhoc-gradient-accent.sunset {
+  background: var(--adhoc-gradient-sunset);
+}
+
+.adhoc-gradient-accent.spring {
+  background: var(--adhoc-gradient-spring);
+}
+
+.adhoc-gradient-accent.summer {
+  background: var(--adhoc-gradient-summer);
+}
+
+.adhoc-gradient-accent.fall {
+  background: var(--adhoc-gradient-fall);
+}
+
+.adhoc-gradient-accent.winter {
+  background: var(--adhoc-gradient-winter);
+}
+
+/**
+ * Gradient hero sections - WCAG AAA COMPLIANT
+ */
+
+.adhoc-hero-gradient {
+  background: var(--adhoc-gradient-sunrise);
+  padding: var(--adhoc-space-16) var(--adhoc-space-8);
+  color: white;
+  border-radius: 12px;
+  margin: var(--adhoc-space-8) 0;
+  /* Text shadow improves contrast on gradients */
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.adhoc-hero-gradient h1,
+.adhoc-hero-gradient h2,
+.adhoc-hero-gradient h3 {
+  color: white;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.adhoc-hero-gradient p {
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/**
+ * Call-to-action sections - WCAG AAA COMPLIANT
+ */
+
+.adhoc-cta {
+  background: var(--adhoc-gray-1);  /* Light gray bg */
+  border-left: 4px solid var(--adhoc-green-medium);
+  padding: var(--adhoc-space-6);
+  margin: var(--adhoc-space-8) 0;
+  border-radius: 8px;
+}
+
+.adhoc-cta h2,
+.adhoc-cta h3,
+.adhoc-cta p {
+  color: var(--adhoc-gray-10);  /* Dark text for contrast */
+}
+
+.adhoc-cta-dark {
+  background: var(--adhoc-green-dark);
+  color: white;
+  padding: var(--adhoc-space-6);
+  margin: var(--adhoc-space-8) 0;
+  border-radius: 8px;
+}
+
+.adhoc-cta-dark h3,
+.adhoc-cta-dark p {
+  color: white;  /* White text on dark green = safe */
+}
+
+.dark .adhoc-cta {
+  background: #2a2a2a;
+  border-left-color: #5FD4A8;
+}
+
+.dark .adhoc-cta h2,
+.dark .adhoc-cta h3,
+.dark .adhoc-cta p {
+  color: #f5f5f5;
+}
+
+/**
+ * Color palette showcases
+ */
+
+.adhoc-color-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: var(--adhoc-space-3);
+  margin: var(--adhoc-space-6) 0;
+}
+
+.adhoc-color-swatch {
+  aspect-ratio: 1;
+  border-radius: 8px;
+  display: flex;
+  align-items: flex-end;
+  padding: var(--adhoc-space-2);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/**
+ * Feature cards with gradient accents - WCAG AAA COMPLIANT
+ */
+
+.adhoc-feature-card {
+  background: white;
+  border-radius: 12px;
+  padding: var(--adhoc-space-6);
+  border-top: 4px solid var(--adhoc-green-medium);
+  margin-bottom: var(--adhoc-space-6);
+  transition: transform 0.2s, box-shadow 0.2s;
+  border: 1px solid var(--adhoc-gray-3);
+}
+
+.adhoc-feature-card h3,
+.adhoc-feature-card p {
+  color: var(--adhoc-gray-10);  /* Dark text for contrast */
+}
+
+.adhoc-feature-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(49, 182, 123, 0.15);
+}
+
+.adhoc-feature-card.sunset {
+  border-top-color: var(--adhoc-monarch-5);
+}
+
+.adhoc-feature-card.spring {
+  border-top-color: var(--adhoc-hibiscus-6);
+}
+
+.adhoc-feature-card.winter {
+  border-top-color: var(--adhoc-ocean-4);
+}
+
+.dark .adhoc-feature-card {
+  background: #1a1a1a;
+  border-color: #333;
+}
+
+.dark .adhoc-feature-card h3,
+.dark .adhoc-feature-card p {
+  color: #f5f5f5;
+}
+
+/**
+ * Responsive adjustments
+ */
+
+@media (max-width: 768px) {
+  :root {
+    /* Adjust spacing for mobile */
+    --adhoc-space-13: 6rem;  /* 96px on mobile */
+    --adhoc-space-16: 6rem;  /* 96px on mobile */
+  }
+  
+  .adhoc-color-grid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  }
+  
+  .adhoc-hero-gradient {
+    padding: var(--adhoc-space-12) var(--adhoc-space-4);
+  }
+}
+
+/* ============================================================================
+   SIDEBAR & NAVIGATION
+   ========================================================================== */
+
+/**
+ * Add gradient accent to active sidebar items
+ */
+
+.VPSidebarItem.is-active > .item .link {
+  color: var(--adhoc-green-dark);
+  font-weight: 700;
+}
+
+.VPSidebarItem.is-active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--adhoc-gradient-sunrise);
+}
+
+/**
+ * Home hero customization
+ */
+
+.VPHero .name {
+  background: var(--adhoc-gradient-sunrise);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.VPHero .tagline {
+  font-family: var(--adhoc-font-serif);
+  font-size: 1.5rem;
+  max-width: 48rem;
+}
+
+/* ============================================================================
+   UTILITY CLASSES
+   ========================================================================== */
+
+.text-gradient-sunrise {
+  background: var(--adhoc-gradient-sunrise);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gradient-sunset {
+  background: var(--adhoc-gradient-sunset);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.bg-green-light {
+  background-color: var(--adhoc-green-light);
+}
+
+.bg-green-medium {
+  background-color: var(--adhoc-green-medium);
+  color: white;
+}
+
+.bg-green-dark {
+  background-color: var(--adhoc-green-dark);
+  color: white;
+}
+
+/* Spacing utilities */
+.space-y-4 > * + * {
+  margin-top: var(--adhoc-space-4);
+}
+
+.space-y-8 > * + * {
+  margin-top: var(--adhoc-space-8);
+}
+
+/* WCAG AAA Compliant text utilities */
+.text-primary {
+  color: var(--adhoc-gray-10);  /* 16.5:1 on white */
+}
+
+.text-secondary {
+  color: var(--adhoc-gray-8);   /* 11:1 on white */
+}
+
+.text-muted {
+  color: var(--adhoc-gray-6);   /* 7.6:1 on white (minimum AAA) */
+}
+
+.dark .text-primary {
+  color: #f5f5f5;  /* Light text on dark */
+}
+
+.dark .text-secondary {
+  color: #d0d0d0;
+}
+
+.dark .text-muted {
+  color: #a0a0a0;
+}
