@@ -14,24 +14,32 @@ templates/           SHARED: specification, task breakdown, decision record, sca
 .claude-plugin/      Plugin manifest and marketplace entry
 packages/mls-app/    Standalone CLI + MCP server (TypeScript)
 packages/mls-pi/     pi.dev agent-harness extension (TypeScript)
+packages/mls-vscode/ VS Code Copilot Chat participant (@mls)
 ```
 
-`skills/` and `templates/` exist exactly once. Both packages resolve them from
-the repo root at runtime — neither carries copies. See
+`skills/` and `templates/` exist exactly once. `mls-app` and `mls-pi` resolve
+them from the repo root at runtime — neither carries copies. See
 `packages/mls-app/src/skills/loader.ts` and `resolveResourceDir` in
 `packages/mls-pi/.pi/extensions/mls/index.ts`.
 
-`packages/mls-pi/agents/` is deliberately NOT shared: pi agents use `mls-*`
-names and a `tools:` frontmatter field that Claude Code agents don't have.
+`mls-vscode` is the exception, and not by choice: a VS Code extension can only
+read files inside its own directory, so `scripts/copy-resources.js` stages the
+shared directories into a generated, gitignored `resources/` at build time. The
+root is still the source of truth — nothing is edited in `resources/`.
+
+Package-local agents are deliberately NOT shared. `mls-pi/agents/` uses `mls-*`
+names and a `tools:` frontmatter field Claude Code doesn't have;
+`mls-vscode/agents/team-lead.md` orchestrates via that extension's slash
+commands, which exist nowhere else. Both are overlaid on the shared set.
 
 ## The three surfaces
 
-| | Plugin (`agents/*.md`) | App (`packages/mls-app`) | Pi (`packages/mls-pi`) |
-|---|---|---|---|
-| Runs in | Claude Code | Node CLI / MCP server | [pi.dev](https://pi.dev) harness |
-| Orchestration | The agent, guided by its prompt | `src/orchestrator/phases.ts` | `.pi/extensions/mls/orchestrator/` |
-| Skill delivery | Model-invoked by description | Always concatenated into the prompt | Always concatenated, via `AGENT_SKILLS` |
-| State | None | `src/state/` (JSON) | SQLite (`better-sqlite3`) |
+| | Plugin (`agents/*.md`) | App (`mls-app`) | Pi (`mls-pi`) | VS Code (`mls-vscode`) |
+|---|---|---|---|---|
+| Runs in | Claude Code | Node CLI / MCP server | [pi.dev](https://pi.dev) harness | Copilot Chat |
+| Orchestration | The agent, guided by its prompt | `src/orchestrator/phases.ts` | `.pi/extensions/mls/orchestrator/` | `team-lead` agent + `/run` phase detection |
+| Skill delivery | Model-invoked by description | Always concatenated into the prompt | Always concatenated, via `AGENT_SKILLS` | Hand-picked per command |
+| State | None | `src/state/` (JSON) | SQLite (`better-sqlite3`) | Workspace files (`decisions/`, `specs/`, `tasks/`) |
 
 ## Why the prompts differ (read before "fixing" them)
 

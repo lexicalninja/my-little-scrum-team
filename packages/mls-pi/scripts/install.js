@@ -101,7 +101,7 @@ function writeRuntimePackageJson(targetDir) {
     packageJsonPath,
     JSON.stringify(
       {
-        name: "@adhoc/mls-pi-extension-runtime",
+        name: "@lexicalninja/mls-pi-runtime",
         private: true,
         type: "module",
         dependencies: {

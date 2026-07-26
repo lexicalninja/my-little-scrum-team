@@ -1,0 +1,12 @@
+.vscode/**
+.vscode-test/**
+src/**
+scripts/**
+.gitignore
+tsconfig.json
+**/*.map
+node_modules/**
+
+# Source for the resource overlay — the built copy ships in resources/ instead.
+# resources/ itself is NOT ignored: the extension reads it at runtime.
+agents/**

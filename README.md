@@ -39,6 +39,7 @@ commands/            Slash commands (/build, /convert-to-extension)
 templates/           Specification, task breakdown, decision record, scaffold
 packages/mls-app/    Standalone CLI + MCP server (see its README)
 packages/mls-pi/     pi.dev harness extension (see its README)
+packages/mls-vscode/ VS Code Copilot Chat participant (see its README)
 ```
 
 `skills/` and `templates/` are deliberately not duplicated inside the packages —
