@@ -30,17 +30,7 @@ export class ImplementationEngineerAgent extends BaseAgent {
 - Follow project coding standards and conventions
 - Implement design specs exactly if provided (colors, spacing, typography)
 - Handle error cases gracefully
-- Use conventional commit format for commit messages
-
-## Commit Format
-
-When committing:
-\`\`\`
-feat(TASK-XXX): brief description
-
-- Detail of change 1
-- Detail of change 2
-\`\`\`
+- Use conventional commit format for commit messages, scoped to the task ID
 
 ## Error Handling
 

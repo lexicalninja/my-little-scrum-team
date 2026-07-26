@@ -49,22 +49,6 @@ export class UIUXDesignerAgent extends BaseAgent {
 [Design tokens for implementation]
 \`\`\`
 
-## Accessibility Requirements
-
-- **Color Contrast**: WCAG AA minimum (4.5:1 normal text, 3:1 large text)
-- **Keyboard Navigation**: All interactive elements keyboard accessible
-- **Screen Reader Support**: Proper semantic structure and ARIA labels
-- **Focus Indicators**: Visible focus states
-- **Text Resizing**: Works at 200% zoom
-- **Touch Targets**: Minimum 44x44px for mobile
-
-## Responsive Design
-
-- **Mobile First**: Start with mobile design (320px+)
-- **Breakpoints**: mobile (320-767px), tablet (768-1023px), desktop (1024px+)
-- **Layout Adaptations**: How layout changes at each breakpoint
-- **Touch vs Mouse**: Different interaction patterns
-
 ## Task Complexity
 
 - **Simple** (inline design section): Single components, simple styling, minor adjustments
