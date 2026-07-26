@@ -83,8 +83,10 @@ export function slugify(text: string): string {
     return text
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, '-')
-        .replace(/^-+|-+$/g, '')
-        .slice(0, 50);
+        .slice(0, 50)
+        // Trim after truncating, not before — otherwise cutting mid-word
+        // reintroduces a trailing dash and yields names like `SPEC-2026-07-26-foo-.md`.
+        .replace(/^-+|-+$/g, '');
 }
 
 export function todayISO(): string {

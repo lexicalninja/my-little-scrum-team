@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { ResourceLoader } from '../resourceLoader';
 import { WorkspaceFiles } from '../workspaceFiles';
-import { selectModel, sendPromptStreaming, slugify, todayISO } from '../lmAgent';
+import { extractSection, selectModel, sendPromptStreaming, slugify, todayISO } from '../lmAgent';
 
 export async function handleSpec(
     request: vscode.ChatRequest,
@@ -97,13 +97,4 @@ Output the complete specification document wrapped in markers:
             stream.markdown(`\n\n---\n\nNext: run \`@mls /tasks\` to break this into actionable tasks.\n`);
         }
     }
-}
-
-function extractSection(text: string, sectionName: string): string | null {
-    const begin = `<!-- BEGIN ${sectionName} -->`;
-    const end = `<!-- END ${sectionName} -->`;
-    const startIdx = text.indexOf(begin);
-    const endIdx = text.indexOf(end);
-    if (startIdx === -1 || endIdx === -1 || endIdx <= startIdx) return null;
-    return text.substring(startIdx + begin.length, endIdx).trim();
 }

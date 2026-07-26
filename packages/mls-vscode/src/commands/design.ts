@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { ResourceLoader } from '../resourceLoader';
 import { WorkspaceFiles } from '../workspaceFiles';
-import { selectModel, sendPromptStreaming, slugify, todayISO } from '../lmAgent';
+import { extractSection, selectModel, sendPromptStreaming, slugify, todayISO } from '../lmAgent';
 
 export async function handleDesign(
     request: vscode.ChatRequest,
@@ -109,13 +109,4 @@ Output design specifications wrapped in markers:
     } catch {
         stream.markdown(`\n\n---\n\nNext: run \`@mls /implement\` with this design spec to implement it.\n`);
     }
-}
-
-function extractSection(text: string, sectionName: string): string | null {
-    const begin = `<!-- BEGIN ${sectionName} -->`;
-    const end = `<!-- END ${sectionName} -->`;
-    const startIdx = text.indexOf(begin);
-    const endIdx = text.indexOf(end);
-    if (startIdx === -1 || endIdx === -1 || endIdx <= startIdx) return null;
-    return text.substring(startIdx + begin.length, endIdx).trim();
 }
