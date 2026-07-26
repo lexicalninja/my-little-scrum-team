@@ -3,7 +3,10 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
   title: 'MLS User Guide',
   description: 'Multi-agent orchestration for pi.dev',
-  base: '/my-little-scrum-team/',
+  // Served from a subpath so the repo's Pages root stays free for other docs.
+  // The deploy workflow stages this build into an `mls-pi/` directory before
+  // upload — the two must stay in sync or every asset 404s.
+  base: '/my-little-scrum-team/mls-pi/',
   
   themeConfig: {
     nav: [

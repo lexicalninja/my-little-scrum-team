@@ -1,5 +1,5 @@
 <template>
-  <div :class="['adhoc-feature-card', variant]">
+  <div :class="['mls-feature-card', variant]">
     <h3 v-if="title">{{ title }}</h3>
     <div class="content">
       <slot />

@@ -68,8 +68,8 @@ See the **[Quick Start Guide](/guide/quick-start.md)** for detailed instructions
 }
 
 .cta-section {
-  background: linear-gradient(135deg, var(--adhoc-green-light) 0%, rgba(49, 182, 123, 0.1) 100%);
-  border-left: 4px solid var(--adhoc-green-medium);
+  background: linear-gradient(135deg, var(--mls-brand-pale) 0%, rgba(115, 98, 138, 0.1) 100%);
+  border-left: 4px solid var(--mls-brand);
   padding: 2rem;
   border-radius: 8px;
   margin: 2rem 0;

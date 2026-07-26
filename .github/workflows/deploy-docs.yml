@@ -1,0 +1,84 @@
+name: Deploy MLS Docs to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'packages/mls-pi/docs/**'
+      - 'packages/mls-pi/package.json'
+      - 'packages/mls-pi/package-lock.json'
+      - '.github/workflows/deploy-docs.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow one deployment at a time; don't cancel a run that's mid-publish.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # VitePress uses git history for lastUpdated timestamps
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: packages/mls-pi/package-lock.json
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: packages/mls-pi
+
+      - name: Build docs
+        run: npm run docs:build
+        working-directory: packages/mls-pi
+
+      # Pages maps the artifact root to /my-little-scrum-team/, so the site has
+      # to live in an `mls-pi/` directory to be served at
+      # /my-little-scrum-team/mls-pi/. This must match `base` in
+      # packages/mls-pi/docs/.vitepress/config.ts.
+      - name: Stage site under /mls-pi/
+        run: |
+          set -euo pipefail
+          mkdir -p _site/mls-pi
+          cp -R packages/mls-pi/docs/.vitepress/dist/. _site/mls-pi/
+          # Redirect the Pages root to the docs rather than serving a bare 404.
+          cat > _site/index.html <<'HTML'
+          <!doctype html>
+          <meta charset="utf-8">
+          <title>My Little Scrum Team</title>
+          <meta http-equiv="refresh" content="0; url=./mls-pi/">
+          <link rel="canonical" href="./mls-pi/">
+          <p><a href="./mls-pi/">My Little Scrum Team documentation</a></p>
+          HTML
+          test -f _site/mls-pi/index.html
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

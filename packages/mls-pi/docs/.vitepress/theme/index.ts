@@ -6,9 +6,7 @@ import './custom.css'
 
 // Import custom components
 import GradientAccent from './components/GradientAccent.vue'
-import HeroGradient from './components/HeroGradient.vue'
 import FeatureCard from './components/FeatureCard.vue'
-import ColorPalette from './components/ColorPalette.vue'
 
 export default {
   extends: DefaultTheme,
@@ -16,14 +14,12 @@ export default {
     return h(DefaultTheme.Layout, null, {
       // Custom layout slots
       // Add a gradient accent at the top of every page
-      'layout-top': () => h('div', { class: 'adhoc-gradient-accent' })
+      'layout-top': () => h('div', { class: 'mls-gradient-accent' })
     })
   },
   enhanceApp({ app, router, siteData }) {
     // Register custom components globally for use in markdown
     app.component('GradientAccent', GradientAccent)
-    app.component('HeroGradient', HeroGradient)
     app.component('FeatureCard', FeatureCard)
-    app.component('ColorPalette', ColorPalette)
   }
 } satisfies Theme

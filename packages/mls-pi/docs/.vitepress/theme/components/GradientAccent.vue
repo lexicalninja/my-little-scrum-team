@@ -1,5 +1,5 @@
 <template>
-  <div :class="['adhoc-gradient-accent', variant]" />
+  <div :class="['mls-gradient-accent', variant]" />
 </template>
 
 <script setup lang="ts">
