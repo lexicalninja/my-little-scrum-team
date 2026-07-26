@@ -1,29 +1,20 @@
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
+# Dependencies
+node_modules/
 
-# Virtual environments
-venv/
-env/
-ENV/
+# Build output
+dist/
+out/
+*.tsbuildinfo
+
+# Test coverage
+coverage/
+
+# Runtime state
+.mls/
+
+# Environment
+.env
+.env.local
 
 # IDE
 .vscode/
