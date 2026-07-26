@@ -17,13 +17,13 @@ You do NOT call Read, Edit, Write, Bash, Grep, or Glob for implementation purpos
 
 | Agent | subagent_type | Use for |
 |-------|--------------|---------|
-| specification-writer | `mls:specification-writer` | Turning ideas into detailed specs |
-| scrum-master | `mls:scrum-master` | Breaking specs into atomic tasks |
-| implementation-engineer | `mls:implementation-engineer` | Writing code from tasks or specs |
-| test-runner | `mls:test-runner` | Running and writing tests |
-| code-reviewer-feedback | `mls:code-reviewer-feedback` | Reviewing code quality |
-| ui-ux-designer | `mls:ui-ux-designer` | Design specs for UI tasks |
-| infrastructure-engineer | `mls:infrastructure-engineer` | Infra, CI/CD, deployment |
+| specification-writer | `mlst:specification-writer` | Turning ideas into detailed specs |
+| scrum-master | `mlst:scrum-master` | Breaking specs into atomic tasks |
+| implementation-engineer | `mlst:implementation-engineer` | Writing code from tasks or specs |
+| test-runner | `mlst:test-runner` | Running and writing tests |
+| code-reviewer-feedback | `mlst:code-reviewer-feedback` | Reviewing code quality |
+| ui-ux-designer | `mlst:ui-ux-designer` | Design specs for UI tasks |
+| infrastructure-engineer | `mlst:infrastructure-engineer` | Infra, CI/CD, deployment |
 
 ## Delegation Prompt Templates
 
@@ -31,7 +31,7 @@ Use these fill-in-the-blank templates when spawning agents. Include ALL relevant
 
 **Implementation-engineer** (for any code work):
 ```
-Agent(subagent_type="mls:implementation-engineer", prompt="
+Agent(subagent_type="mlst:implementation-engineer", prompt="
 ## Task
 [What needs to be done — one paragraph]
 
@@ -51,7 +51,7 @@ Agent(subagent_type="mls:implementation-engineer", prompt="
 
 **Specification-writer** (for turning ideas into specs):
 ```
-Agent(subagent_type="mls:specification-writer", prompt="
+Agent(subagent_type="mlst:specification-writer", prompt="
 ## Idea
 [Description of what needs to be built]
 
@@ -65,7 +65,7 @@ Agent(subagent_type="mls:specification-writer", prompt="
 
 **Scrum-master** (for breaking specs into tasks):
 ```
-Agent(subagent_type="mls:scrum-master", prompt="
+Agent(subagent_type="mlst:scrum-master", prompt="
 ## Specification
 [Paste the full specification from specification-writer]
 
@@ -76,7 +76,7 @@ Agent(subagent_type="mls:scrum-master", prompt="
 
 **Test-runner** (for validating implementations):
 ```
-Agent(subagent_type="mls:test-runner", prompt="
+Agent(subagent_type="mlst:test-runner", prompt="
 ## What Changed
 [Paste implementation-engineer's summary of changes]
 
@@ -90,7 +90,7 @@ Agent(subagent_type="mls:test-runner", prompt="
 
 **Code-reviewer-feedback** (for reviewing code):
 ```
-Agent(subagent_type="mls:code-reviewer-feedback", prompt="
+Agent(subagent_type="mlst:code-reviewer-feedback", prompt="
 ## What Changed
 [Paste implementation-engineer's summary of changes]
 
@@ -231,13 +231,13 @@ When the input is a **plan** (broader than a single epic/feature):
 
 **Group 1 — Design + Infrastructure (parallel):**
 Spawn these simultaneously if they have no dependencies on each other:
-- `Agent(subagent_type="mls:ui-ux-designer", ...)` for tasks marked Type: Design
-- `Agent(subagent_type="mls:infrastructure-engineer", ...)` for infrastructure/deployment tasks
+- `Agent(subagent_type="mlst:ui-ux-designer", ...)` for tasks marked Type: Design
+- `Agent(subagent_type="mlst:infrastructure-engineer", ...)` for infrastructure/deployment tasks
 - Wait for both to complete before proceeding to implementation
 
 **Group 2 — Implementation (parallel where possible):**
 - Check that all dependencies (design specs, infrastructure) are complete
-- For independent implementation tasks, spawn multiple `mls:implementation-engineer` agents in parallel
+- For independent implementation tasks, spawn multiple `mlst:implementation-engineer` agents in parallel
 - For dependent tasks, spawn sequentially
 - Each implementation task follows: implementation-engineer → test-runner → code-reviewer-feedback
 - Iterate until approved

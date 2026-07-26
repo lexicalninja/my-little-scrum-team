@@ -7,7 +7,7 @@ A Claude Code plugin providing a collection of AI agents and skills that work to
 ### From Plugin Marketplace
 
 ```
-/plugin install mls
+/plugin install mlst
 ```
 
 ### From GitHub
@@ -37,9 +37,9 @@ agents/              Agent definitions (7)
 skills/              Skill definitions (40) — shared, single source of truth
 commands/            Slash commands (/build, /convert-to-extension)
 templates/           Specification, task breakdown, decision record, scaffold
-packages/mls-app/    Standalone CLI + MCP server (see its README)
-packages/mls-pi/     pi.dev harness extension (see its README)
-packages/mls-vscode/ VS Code Copilot Chat participant (see its README)
+packages/mlst-app/    Standalone CLI + MCP server (see its README)
+packages/mlst-pi/     pi.dev harness extension (see its README)
+packages/mlst-vscode/ VS Code Copilot Chat participant (see its README)
 ```
 
 `skills/` and `templates/` are deliberately not duplicated inside the packages —
@@ -195,7 +195,7 @@ Reviews code and provides structured feedback documents. Pre-categorizes issues 
 
 ### Automatic Orchestration (Recommended)
 
-Use `/mls:build` to kick off the full workflow from idea to implementation:
+Use `/mlst:build` to kick off the full workflow from idea to implementation:
 
 ```
 /my-little-scrum-team:build build a user login page with email and password

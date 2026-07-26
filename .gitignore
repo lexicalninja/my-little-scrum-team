@@ -10,7 +10,7 @@ out/
 coverage/
 
 # Runtime state
-.mls/
+.mlst/
 
 # Environment
 .env
