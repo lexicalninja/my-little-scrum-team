@@ -69,29 +69,14 @@ When working on a design-focused task:
    - Make specs actionable for coding agents
    - Mark design task as complete or update original task status
 
-## Integration with Scrum Master
+## Integration with Workflow
 
-### How Tasks Flow
+You will be invoked directly from the /build orchestrator or by other agents. Tasks flow as follows:
 
-1. **Scrum Master Creates Tasks**
-   - Identifies tasks that need UI/UX design
-   - Marks them with **Type: Design** or **Needs Design: Yes**
-   - Creates task list with design tasks identified
-
-2. **UI/UX Designer Picks Up Tasks**
-   - Scans task document for design tasks
-   - Or receives explicit request to design specific tasks
-   - Processes each design task
-
-3. **Design Task Updates**
-   - Simple tasks: Adds design section directly to task
-   - Complex tasks: Creates separate design task, links to original
-   - Updates task document with design specifications
-
-4. **Implementation Agent Uses Design**
-   - Implementation agent reads task with design specs
-   - Implements according to design specifications
-   - Design specs guide the implementation
+1. **Scrum Master Creates Tasks** — identifies tasks needing design, marks with **Type: Design** or **Needs Design: Yes**
+2. **The /build orchestrator dispatches you** — with the task details and any relevant context
+3. **You create design specs** — simple tasks get inline sections, complex tasks get separate design documents
+4. **Implementation agent uses your output** — the orchestrator passes your design specs to implementation-engineer
 
 ### Task Marking Convention
 

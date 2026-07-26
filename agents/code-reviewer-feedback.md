@@ -51,9 +51,14 @@ When invoked:
    - Use best-practices-checker to check best practices
    - Run skills in parallel when possible for efficiency
 
-3. **Aggregate and Organize Issues**
+3. **Aggregate and Categorize Issues**
    - Collect all issues from all review skills
-   - Group issues by priority (Must-Fix, Should-Fix, Nice-to-Have)
+   - **Pre-categorize each issue by actionability**:
+     - **Must-Fix**: Critical issues that block approval (bugs, security, spec violations)
+     - **Should-Fix**: Important issues that should be addressed (performance, best practices)
+     - **Nice-to-Have**: Minor improvements (cosmetic, refactoring suggestions)
+     - **Out-of-Scope**: Valid issues that are beyond the current task scope (new features, unrelated refactoring) - these should be escalated to scrum-master as new tasks
+     - **Needs-Discussion**: Issues the reviewer is uncertain about or that may require implementer input
    - Group issues by category (Bug, Style, Performance, Security, etc.)
    - Assign unique issue IDs (BUG-001, STYLE-001, SEC-001, etc.)
    - Count total issues and files affected
@@ -83,19 +88,27 @@ The feedback document must follow this structure:
 - Must-Fix: X
 - Should-Fix: X
 - Nice-to-Have: X
+- Out-of-Scope: X
+- Needs-Discussion: X
 - Files Reviewed: X
 - Specification Alignment: [Pass/Fail/Partial]
 
-## Issues by Priority
+## Issues by Actionability
 
 ### Must-Fix Issues
-[List of critical issues with issue IDs]
+[Critical issues that block approval - implementer must fix these]
 
 ### Should-Fix Issues
-[List of important issues with issue IDs]
+[Important issues - implementer should fix these]
 
 ### Nice-to-Have Issues
-[List of minor improvements with issue IDs]
+[Minor improvements - implementer may fix these]
+
+### Out-of-Scope Issues
+[Valid issues beyond current task scope - escalate to scrum-master as new tasks]
+
+### Needs-Discussion Issues
+[Issues requiring implementer input or clarification before proceeding]
 
 ## Issues by Category
 
@@ -129,10 +142,10 @@ The feedback document must follow this structure:
 - **Issue ID**: BUG-001, STYLE-001, etc.
 - **File**: path/to/file.ext
 - **Lines**: X-Y (or specific line numbers)
-- **Priority**: Must-Fix / Should-Fix / Nice-to-Have
+- **Actionability**: Must-Fix / Should-Fix / Nice-to-Have / Out-of-Scope / Needs-Discussion
 - **Category**: Bug / Style / Performance / Security / Accessibility / Architecture / Best Practice / Specification
 - **Issue**: Clear description of the problem
-- **Current Code**: 
+- **Current Code**:
   ```language
   // Show the problematic code
   ```
@@ -143,6 +156,8 @@ The feedback document must follow this structure:
 - **Reason**: Why this change is needed
 - **Acceptance Criteria** (optional): How to verify the fix
 - **Specification Reference** (if applicable): Which requirement this relates to
+- **Escalation Note** (for Out-of-Scope): Suggested new task description for scrum-master
+- **Discussion Question** (for Needs-Discussion): Specific question for implementer
 
 ## Summary of Changes Needed
 
@@ -167,7 +182,7 @@ Use consistent issue IDs for easy parsing:
 - **BEST-001, BEST-002, ...** for best practice issues
 - **SPEC-001, SPEC-002, ...** for specification alignment issues
 
-## Prioritization Guidelines
+## Categorization Guidelines
 
 ### Must-Fix
 - Bugs that cause crashes or incorrect behavior
@@ -182,14 +197,39 @@ Use consistent issue IDs for easy parsing:
 - Performance optimizations
 - Best practice violations
 - Non-critical accessibility issues
-- Specification improvements (nice-to-have features)
 
 ### Nice-to-Have
 - Code style improvements (cosmetic)
 - Minor optimizations
 - Documentation improvements
-- Refactoring opportunities
-- Future-proofing suggestions
+- Refactoring opportunities within scope
+- Future-proofing suggestions within scope
+
+### Out-of-Scope
+Use this category when the issue is valid but beyond the current task:
+- Feature requests not in the original task specification
+- Refactoring of code unrelated to the current task
+- Improvements to other components not being modified
+- "While you're here, also fix X" suggestions unrelated to task
+- Architecture changes beyond what the task requires
+
+**For Out-of-Scope issues, always include:**
+- Clear explanation of why it's out of scope
+- Suggested task description for scrum-master to create a new task
+- Whether it blocks the current task or can be done independently
+
+### Needs-Discussion
+Use this category when reviewer is uncertain or needs implementer input:
+- Issues where the correct approach is unclear
+- Trade-offs that require implementer's domain knowledge
+- Potential issues that may be intentional design decisions
+- Cases where specification is ambiguous
+- Performance vs. readability trade-offs
+
+**For Needs-Discussion issues, always include:**
+- Specific question for the implementer
+- Options being considered
+- Reviewer's tentative recommendation (if any)
 
 ## Using Review Skills
 
@@ -252,19 +292,24 @@ When reviewing against specifications:
 
 ## Example Workflow
 
-1. Receive code changes to review
-2. Identify changed files: `dog-page/index.html`, `dog-page/styles.css`
+1. Receive code changes to review for TASK-010: "Style the submit button"
+2. Identify changed files: `components/Button.tsx`, `styles/button.css`
 3. Run review skills in parallel:
-   - bug-detector: Finds 0 bugs
+   - bug-detector: Finds 1 null check issue
    - security-scanner: Finds 0 security issues
-   - specification-checker: Finds 1 missing requirement
+   - specification-checker: Finds 1 missing hover state
    - code-style-analyzer: Finds 2 style issues
-   - performance-analyzer: Finds 0 performance issues
-   - accessibility-checker: Finds 1 accessibility issue
-   - architecture-reviewer: Finds 0 architecture issues
+   - performance-analyzer: Finds 1 optimization opportunity
+   - accessibility-checker: Finds 1 missing ARIA label
+   - architecture-reviewer: Suggests refactoring unrelated component
    - best-practices-checker: Finds 1 best practice issue
-4. Aggregate issues: 5 total (1 Must-Fix, 3 Should-Fix, 1 Nice-to-Have)
-5. Create feedback document with all issues properly formatted
-6. Output structured feedback document
+4. Categorize issues by actionability:
+   - **Must-Fix (2)**: Null check bug, missing ARIA label
+   - **Should-Fix (3)**: Missing hover state, 2 style issues
+   - **Nice-to-Have (1)**: Performance optimization
+   - **Out-of-Scope (1)**: Refactoring unrelated component → escalate to scrum-master
+   - **Needs-Discussion (1)**: Best practice issue (unclear if intentional)
+5. Create feedback document with pre-categorized issues
+6. Output structured feedback document with clear action items per category
 
 Be thorough, specific, and actionable. Coordinate all review skills to create comprehensive feedback that coding agents can use to efficiently fix all issues and improve code quality.

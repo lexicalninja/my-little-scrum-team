@@ -5,16 +5,17 @@
   },
   "plugins": [
     {
-      "name": "my-little-scrum-team",
+      "name": "mls",
+      "source": "./",
+      "description": "A coordinated AI scrum team. The /build command orchestrates specialist agents (specification writer, scrum master, UI/UX designer, implementation engineer, infrastructure engineer, test runner, and code reviewer) directly from the main conversation, plus 39 reusable skills for development workflows.",
+      "version": "2.0.2",
       "author": {
-        "name": "Patrick Saxton"
+        "name": "lexicalninja",
+        "email": "lexicalninja@gmail.com"
       },
-      "source": {
-        "source": "github",
-        "repo": "lexicalninja/my-little-scrum-team"
-      },
-      "description": "A coordinated AI scrum team with agents and skills for development workflows",
-      "version": "1.0.0"
+      "license": "MIT",
+      "keywords": ["scrum", "agents", "workflow", "development", "team"],
+      "category": "development"
     }
   ]
 }

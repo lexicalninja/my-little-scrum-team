@@ -1,12 +1,23 @@
 {
   "name": "mls",
-  "description": "A collection of AI agents and skills that work together as a coordinated scrum team. Includes orchestrator, manager, specification writer, scrum master, UI/UX designer, implementation engineer, infrastructure engineer, and code reviewer agents, plus 44 reusable skills for development workflows.",
-  "version": "1.0.0",
+  "description": "A collection of AI agents and skills that work together as a coordinated scrum team. The /build command orchestrates specialist agents (specification writer, scrum master, UI/UX designer, implementation engineer, infrastructure engineer, test runner, and code reviewer) directly from the main conversation, plus 39 reusable skills and commands for development workflows.",
+  "version": "2.0.2",
   "author": {
     "name": "lexicalninja",
     "email": "lexicalninja@gmail.com"
   },
   "license": "MIT",
   "repository": "https://github.com/lexicalninja/my-little-scrum-team",
-  "homepage": "https://github.com/lexicalninja/my-little-scrum-team"
+  "homepage": "https://github.com/lexicalninja/my-little-scrum-team",
+  "commands": "./commands/",
+  "agents": [
+    "./agents/code-reviewer-feedback.md",
+    "./agents/implementation-engineer.md",
+    "./agents/infrastructure-engineer.md",
+    "./agents/scrum-master.md",
+    "./agents/specification-writer.md",
+    "./agents/test-runner.md",
+    "./agents/ui-ux-designer.md"
+  ],
+  "skills": "./skills/"
 }
