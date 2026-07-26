@@ -1,4 +1,4 @@
-/* MLS Dashboard — Ad Hoc theme: agent-centric layout, IBM Plex */
+/* MLS Dashboard — agent-centric layout, IBM Plex */
 
 :root {
   --font-sans: 'IBM Plex Sans', sans-serif;
@@ -10,15 +10,20 @@
   --text:    #c0c0c0;
   --muted:   #606060;
   --dim:     #3e3e3e;
-  /* Ad Hoc brand green */
-  --green:   #4a9e6e;
-  --green-dim: #4a9e6e22;
-  /* Ad Hoc secondary */
-  --purple:  #3d3775;
-  --pink:    #e05a9e;
-  --yellow:  #c9a034;
-  --red:     #d04848;
-  --orange:  #c07a30;
+
+  /* Status colours. Every value below clears WCAG AAA (7:1) against --bg, so
+     they stay legible as the 13px text this dashboard is built from. Hues come
+     from the shared MLS palette; where the raw hue fell short of 7:1 on this
+     background it was lightened with hue and saturation preserved.
+
+     Keep the semantics: green = done, amber = in flight, coral = failed. */
+  --brand:   #a89cb8;   /* 7.05:1 — product identity, focus rings */
+  --green:   #59cd90;   /* 9.18:1 — success, complete, running */
+  --green-dim: #59cd9022;
+  --purple:  #a89cb8;   /* 7.05:1 — phase markers */
+  --yellow:  #fac05e;   /* 11.10:1 — in progress, gates */
+  --red:     #fe776e;   /* 7.02:1 — errors, escalation, test failures */
+  --blue:    #47abd8;   /* 7.27:1 — phase markers in the event log */
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -31,13 +36,13 @@ body { font-family: var(--font-sans); background: var(--bg); color: var(--text);
 
 /* ─── Top Bar ─────────────────────────────────── */
 .top { display: flex; align-items: center; gap: 16px; padding: 12px 16px; background: var(--surface); border-bottom: 1px solid var(--border); }
-.top h1 { font-size: 14px; font-weight: 600; color: var(--green); }
+.top h1 { font-size: 14px; font-weight: 600; color: var(--brand); }
 .badge { padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; }
 .badge.waiting { background: var(--border); color: var(--muted); }
 .badge.running { background: var(--green-dim); color: var(--green); }
 .badge.complete { background: var(--green-dim); color: var(--green); }
 .session-selector { background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: 4px; padding: 2px 6px; font-size: 11px; font-family: var(--font-mono); cursor: pointer; max-width: 240px; }
-.session-selector:focus { outline: 1px solid var(--green); }
+.session-selector:focus { outline: 1px solid var(--brand); }
 .progress-bar { margin-left: auto; display: flex; align-items: center; gap: 8px; }
 .progress-segments { display: flex; gap: 2px; align-items: center; }
 .seg { width: 12px; height: 8px; border-radius: 2px; background: var(--border); transition: background 0.3s ease; }
@@ -144,39 +149,39 @@ body { font-family: var(--font-sans); background: var(--bg); color: var(--text);
 .event.gate-fail .tag { background: none; padding: 0; }
 .event .time { color: var(--dim); min-width: 55px; font-size: 11px; font-family: var(--font-mono); }
 .event .tag { min-width: 55px; font-weight: 600; font-size: 11px; font-family: var(--font-mono); }
-.event .agent-log-name { color: #b8d8b0; font-size: 11px; font-family: var(--font-mono); font-weight: 600; white-space: nowrap; text-transform: uppercase; }
+.event .agent-log-name { color: var(--green); font-size: 11px; font-family: var(--font-mono); font-weight: 600; white-space: nowrap; text-transform: uppercase; }
 .event .msg { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .event .cost { color: var(--dim); font-size: 11px; font-family: var(--font-mono); }
 .twirl { width: 12px; font-size: 9px; color: var(--muted); flex-shrink: 0; text-align: center; }
 .no-twirl { width: 12px; flex-shrink: 0; }
 
 /* Tag colors */
-.tag.agent { color: #b8d8b0; }
+.tag.agent { color: var(--green); }
 .tag.llm { color: var(--green); }
 .tag.code { color: var(--green); opacity: 0.6; }
 .tag.code ~ .msg { color: var(--muted); }
 .tag.gate { color: #1e1e1e; background: var(--yellow); border-radius: 2px; }
-.tag.phase { color: #6ba3c7; }
-.event.phase-row { background: #6ba3c7; margin-top: 4px; margin-bottom: 4px; }
+.tag.phase { color: var(--blue); }
+.event.phase-row { background: var(--blue); margin-top: 4px; margin-bottom: 4px; }
 .event.phase-row .time, .event.phase-row .tag, .event.phase-row .msg { color: var(--bg); }
 .event.phase-row .msg { font-weight: 600; }
-.tag.review { color: #9b8ec4; }
-.event.review-fail { background: #d0484815; margin-top: 2px; margin-bottom: 2px; }
+.tag.review { color: var(--brand); }
+.event.review-fail { background: #fe776e15; margin-top: 2px; margin-bottom: 2px; }
 .event.review-fail .tag { color: var(--red); }
 .event.review-fail .msg { color: var(--red); }
-.event.review-escalated { background: #d0484830; margin-top: 2px; margin-bottom: 2px; }
+.event.review-escalated { background: #fe776e30; margin-top: 2px; margin-bottom: 2px; }
 .event.review-escalated .tag { color: #fff; }
 .event.review-escalated .msg { color: #fff; }
-.event.task-escalated { background: #d0484815; margin-top: 2px; margin-bottom: 2px; }
+.event.task-escalated { background: #fe776e15; margin-top: 2px; margin-bottom: 2px; }
 .event.task-escalated .tag { color: var(--red); }
 .event.task-escalated .msg { color: var(--red); }
 .event.deletion-normal { background: var(--green-dim); }
 .event.deletion-normal .tag { color: var(--green); background: none; padding: 0; }
 .event.deletion-normal .msg { color: var(--green); }
-.event.deletion-large { background: #c9a03420; margin-top: 2px; margin-bottom: 2px; }
+.event.deletion-large { background: #fac05e20; margin-top: 2px; margin-bottom: 2px; }
 .event.deletion-large .tag { color: var(--yellow); background: none; padding: 0; }
 .event.deletion-large .msg { color: var(--yellow); }
-.event.deletion-catastrophic { background: #d0484830; margin-top: 2px; margin-bottom: 2px; }
+.event.deletion-catastrophic { background: #fe776e30; margin-top: 2px; margin-bottom: 2px; }
 .event.deletion-catastrophic .tag { color: var(--red); background: none; padding: 0; }
 .event.deletion-catastrophic .msg { color: var(--red); }
 
@@ -259,4 +264,4 @@ body { font-family: var(--font-sans); background: var(--bg); color: var(--text);
 .gate-rounds { font-size: 10px; font-family: var(--font-mono); color: var(--dim); }
 .gate-auto { font-size: 10px; font-family: var(--font-mono); color: var(--dim); font-style: italic; }
 .gate-summary { font-size: 10px; color: var(--muted); margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.badge.aborted { background: #d0484830; color: var(--red); }
+.badge.aborted { background: #fe776e30; color: var(--red); }

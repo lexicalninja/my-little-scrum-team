@@ -18,9 +18,10 @@
    ========================================================================== */
 
 /**
- * Both families are open-licensed and referenced by name only — they resolve
- * from the user's system, with the stacks below as fallbacks. No @font-face,
- * no bundled or externally fetched font files.
+ * Inter is bundled locally by VitePress. The serif is referenced by name and
+ * falls back to Georgia. No @font-face here and no third-party font requests —
+ * the Google Fonts links were removed from config.ts along with the commercial
+ * brand faces they stood in for.
  */
 
 /* ============================================================================
@@ -227,7 +228,7 @@
    ========================================================================== */
 
 /**
- * Apply Ad Hoc typography scale and weights
+ * Apply the MLS typography scale and weights
  */
 
 .vp-doc h1,
@@ -326,7 +327,7 @@
    ========================================================================== */
 
 /**
- * Gradient accent bars - Ad Hoc "Sunrise" concept
+ * Gradient accent bars — the "sunrise" variant
  */
 
 .mls-gradient-accent {

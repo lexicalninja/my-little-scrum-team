@@ -10,7 +10,7 @@
 <script setup lang="ts">
 /**
  * FeatureCard Component
- * Card with gradient top accent matching Ad Hoc seasonal palettes
+ * Card with a gradient top accent, keyed to the seasonal palette variants
  * 
  * Usage in markdown:
  * <FeatureCard title="New Feature" variant="sunset">

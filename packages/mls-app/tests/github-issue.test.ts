@@ -71,9 +71,9 @@ describe('parseIssueRef', () => {
   });
 
   it('parses qualified owner/repo#N reference', () => {
-    expect(parseIssueRef('adhocteam/hoc-market#25')).toEqual({
-      owner: 'adhocteam',
-      repo: 'hoc-market',
+    expect(parseIssueRef('lexicalninja/my-little-scrum-team#25')).toEqual({
+      owner: 'lexicalninja',
+      repo: 'my-little-scrum-team',
       number: 25,
     });
   });
@@ -99,8 +99,8 @@ describe('parseIssueRef', () => {
   });
 
   it('prefers qualified reference over bare when both appear', () => {
-    const result = parseIssueRef('adhocteam/hoc-market#7 and also #99');
-    expect(result).toEqual({ owner: 'adhocteam', repo: 'hoc-market', number: 7 });
+    const result = parseIssueRef('lexicalninja/my-little-scrum-team#7 and also #99');
+    expect(result).toEqual({ owner: 'lexicalninja', repo: 'my-little-scrum-team', number: 7 });
   });
 });
 
@@ -112,26 +112,26 @@ describe('inferRepoFromGitRemote', () => {
   });
 
   it('parses an HTTPS remote URL', async () => {
-    setupExecFileSequence([{ stdout: 'https://github.com/adhocteam/hoc-market.git' }]);
+    setupExecFileSequence([{ stdout: 'https://github.com/lexicalninja/my-little-scrum-team.git' }]);
     expect(await inferRepoFromGitRemote()).toEqual({
-      owner: 'adhocteam',
-      repo: 'hoc-market',
+      owner: 'lexicalninja',
+      repo: 'my-little-scrum-team',
     });
   });
 
   it('parses an HTTPS remote URL without .git suffix', async () => {
-    setupExecFileSequence([{ stdout: 'https://github.com/adhocteam/hoc-market' }]);
+    setupExecFileSequence([{ stdout: 'https://github.com/lexicalninja/my-little-scrum-team' }]);
     expect(await inferRepoFromGitRemote()).toEqual({
-      owner: 'adhocteam',
-      repo: 'hoc-market',
+      owner: 'lexicalninja',
+      repo: 'my-little-scrum-team',
     });
   });
 
   it('parses an SSH remote URL', async () => {
-    setupExecFileSequence([{ stdout: 'git@github.com:adhocteam/hoc-market.git' }]);
+    setupExecFileSequence([{ stdout: 'git@github.com:lexicalninja/my-little-scrum-team.git' }]);
     expect(await inferRepoFromGitRemote()).toEqual({
-      owner: 'adhocteam',
-      repo: 'hoc-market',
+      owner: 'lexicalninja',
+      repo: 'my-little-scrum-team',
     });
   });
 
@@ -178,8 +178,8 @@ describe('fetchGitHubIssue', () => {
     ]);
 
     const result = await fetchGitHubIssue({
-      owner: 'adhocteam',
-      repo: 'hoc-market',
+      owner: 'lexicalninja',
+      repo: 'my-little-scrum-team',
       number: 25,
     });
 
@@ -203,8 +203,8 @@ describe('fetchGitHubIssue', () => {
     ]);
 
     const result = await fetchGitHubIssue({
-      owner: 'adhocteam',
-      repo: 'hoc-market',
+      owner: 'lexicalninja',
+      repo: 'my-little-scrum-team',
       number: 1,
     });
 
@@ -219,8 +219,8 @@ describe('fetchGitHubIssue', () => {
     ]);
 
     const result = await fetchGitHubIssue({
-      owner: 'adhocteam',
-      repo: 'hoc-market',
+      owner: 'lexicalninja',
+      repo: 'my-little-scrum-team',
       number: 25,
     });
 
@@ -242,8 +242,8 @@ describe('fetchGitHubIssue', () => {
     ]);
 
     const result = await fetchGitHubIssue({
-      owner: 'adhocteam',
-      repo: 'hoc-market',
+      owner: 'lexicalninja',
+      repo: 'my-little-scrum-team',
       number: 3,
     });
 
@@ -258,8 +258,8 @@ describe('fetchGitHubIssue', () => {
     ]);
 
     const result = await fetchGitHubIssue({
-      owner: 'adhocteam',
-      repo: 'hoc-market',
+      owner: 'lexicalninja',
+      repo: 'my-little-scrum-team',
       number: 25,
     });
 
@@ -270,12 +270,12 @@ describe('fetchGitHubIssue', () => {
     setupExecFileSequence([{ error: new Error('command not found: gh') }]);
 
     await expect(
-      fetchGitHubIssue({ owner: 'adhocteam', repo: 'hoc-market', number: 25 }),
+      fetchGitHubIssue({ owner: 'lexicalninja', repo: 'my-little-scrum-team', number: 25 }),
     ).rejects.toThrow(GithubIssueError);
 
     setupExecFileSequence([{ error: new Error('command not found: gh') }]);
     await expect(
-      fetchGitHubIssue({ owner: 'adhocteam', repo: 'hoc-market', number: 25 }),
+      fetchGitHubIssue({ owner: 'lexicalninja', repo: 'my-little-scrum-team', number: 25 }),
     ).rejects.toThrow(/not found/i);
   });
 
@@ -286,7 +286,7 @@ describe('fetchGitHubIssue', () => {
     ]);
 
     await expect(
-      fetchGitHubIssue({ owner: 'adhocteam', repo: 'hoc-market', number: 25 }),
+      fetchGitHubIssue({ owner: 'lexicalninja', repo: 'my-little-scrum-team', number: 25 }),
     ).rejects.toThrow(GithubIssueError);
 
     setupExecFileSequence([
@@ -294,7 +294,7 @@ describe('fetchGitHubIssue', () => {
       { error: new Error('not authenticated') },
     ]);
     await expect(
-      fetchGitHubIssue({ owner: 'adhocteam', repo: 'hoc-market', number: 25 }),
+      fetchGitHubIssue({ owner: 'lexicalninja', repo: 'my-little-scrum-team', number: 25 }),
     ).rejects.toThrow(/not authenticated/i);
   });
 
@@ -306,7 +306,7 @@ describe('fetchGitHubIssue', () => {
     ]);
 
     await expect(
-      fetchGitHubIssue({ owner: 'adhocteam', repo: 'hoc-market', number: 9999 }),
+      fetchGitHubIssue({ owner: 'lexicalninja', repo: 'my-little-scrum-team', number: 9999 }),
     ).rejects.toThrow(GithubIssueError);
 
     setupExecFileSequence([
@@ -315,7 +315,7 @@ describe('fetchGitHubIssue', () => {
       { error: new Error('issue not found') },
     ]);
     await expect(
-      fetchGitHubIssue({ owner: 'adhocteam', repo: 'hoc-market', number: 9999 }),
+      fetchGitHubIssue({ owner: 'lexicalninja', repo: 'my-little-scrum-team', number: 9999 }),
     ).rejects.toThrow(/not found/i);
   });
 
@@ -323,7 +323,7 @@ describe('fetchGitHubIssue', () => {
     setupExecFileSequence([
       { stdout: 'gh version 2.0.0' },             // gh --version
       { stdout: 'Logged in to github.com' },       // gh auth status
-      { stdout: 'https://github.com/adhocteam/hoc-market.git' }, // git remote
+      { stdout: 'https://github.com/lexicalninja/my-little-scrum-team.git' }, // git remote
       { stdout: validIssueJSON },                  // gh issue view
     ]);
 
@@ -350,7 +350,7 @@ describe('resolveIssueReference', () => {
     setupExecFileSequence([
       { stdout: 'gh version 2.0.0' },
       { stdout: 'Logged in to github.com' },
-      { stdout: 'https://github.com/adhocteam/hoc-market.git' },
+      { stdout: 'https://github.com/lexicalninja/my-little-scrum-team.git' },
       { stdout: validIssueJSON },
     ]);
 
@@ -363,7 +363,7 @@ describe('resolveIssueReference', () => {
     setupExecFileSequence([
       { stdout: 'gh version 2.0.0' },
       { stdout: 'Logged in to github.com' },
-      { stdout: 'https://github.com/adhocteam/hoc-market.git' },
+      { stdout: 'https://github.com/lexicalninja/my-little-scrum-team.git' },
       { stdout: validIssueJSON },
     ]);
 
@@ -417,7 +417,7 @@ describe('fetchGitHubIssue uses execFile (not exec) for all subprocess calls', (
       { stdout: validIssueJSON },
     ]);
 
-    await fetchGitHubIssue({ owner: 'adhocteam', repo: 'hoc-market', number: 1 });
+    await fetchGitHubIssue({ owner: 'lexicalninja', repo: 'my-little-scrum-team', number: 1 });
 
     // execFile must have been called (not exec which is not mocked)
     expect(mockExecFile()).toHaveBeenCalled();
@@ -434,7 +434,7 @@ describe('fetchGitHubIssue uses execFile (not exec) for all subprocess calls', (
       { stdout: validIssueJSON },
     ]);
 
-    await fetchGitHubIssue({ owner: 'adhocteam', repo: 'hoc-market', number: 1 });
+    await fetchGitHubIssue({ owner: 'lexicalninja', repo: 'my-little-scrum-team', number: 1 });
 
     // All three subprocess calls (gh --version, gh auth status, gh issue view)
     // must have gone through execFile.
@@ -463,7 +463,7 @@ describe('every execFile call includes timeout: 10_000', () => {
       { stdout: validIssueJSON },
     ]);
 
-    await fetchGitHubIssue({ owner: 'adhocteam', repo: 'hoc-market', number: 1 });
+    await fetchGitHubIssue({ owner: 'lexicalninja', repo: 'my-little-scrum-team', number: 1 });
 
     const firstCallOpts = mockExecFile().mock.calls[0][2] as { timeout?: number };
     expect(firstCallOpts.timeout).toBe(10_000);
@@ -476,7 +476,7 @@ describe('every execFile call includes timeout: 10_000', () => {
       { stdout: validIssueJSON },
     ]);
 
-    await fetchGitHubIssue({ owner: 'adhocteam', repo: 'hoc-market', number: 1 });
+    await fetchGitHubIssue({ owner: 'lexicalninja', repo: 'my-little-scrum-team', number: 1 });
 
     const secondCallOpts = mockExecFile().mock.calls[1][2] as { timeout?: number };
     expect(secondCallOpts.timeout).toBe(10_000);
@@ -489,7 +489,7 @@ describe('every execFile call includes timeout: 10_000', () => {
       { stdout: validIssueJSON },
     ]);
 
-    await fetchGitHubIssue({ owner: 'adhocteam', repo: 'hoc-market', number: 1 });
+    await fetchGitHubIssue({ owner: 'lexicalninja', repo: 'my-little-scrum-team', number: 1 });
 
     const thirdCallOpts = mockExecFile().mock.calls[2][2] as { timeout?: number };
     expect(thirdCallOpts.timeout).toBe(10_000);
@@ -497,7 +497,7 @@ describe('every execFile call includes timeout: 10_000', () => {
 
   it('passes timeout: 10_000 on the git remote get-url call', async () => {
     setupExecFileSequence([
-      { stdout: 'https://github.com/adhocteam/hoc-market.git' },
+      { stdout: 'https://github.com/lexicalninja/my-little-scrum-team.git' },
     ]);
 
     await inferRepoFromGitRemote();
@@ -529,8 +529,8 @@ describe('output format matches spec: header line, blank line, body, optional me
     ]);
 
     const result = await fetchGitHubIssue({
-      owner: 'adhocteam',
-      repo: 'hoc-market',
+      owner: 'lexicalninja',
+      repo: 'my-little-scrum-team',
       number: 42,
     });
 
@@ -555,8 +555,8 @@ describe('output format matches spec: header line, blank line, body, optional me
     ]);
 
     const result = await fetchGitHubIssue({
-      owner: 'adhocteam',
-      repo: 'hoc-market',
+      owner: 'lexicalninja',
+      repo: 'my-little-scrum-team',
       number: 7,
     });
 
@@ -579,8 +579,8 @@ describe('output format matches spec: header line, blank line, body, optional me
     ]);
 
     const result = await fetchGitHubIssue({
-      owner: 'adhocteam',
-      repo: 'hoc-market',
+      owner: 'lexicalninja',
+      repo: 'my-little-scrum-team',
       number: 5,
     });
 
@@ -599,7 +599,7 @@ describe('error messages match user-facing strings from spec', () => {
     setupExecFileSequence([{ error: new Error('command not found: gh') }]);
 
     await expect(
-      fetchGitHubIssue({ owner: 'adhocteam', repo: 'hoc-market', number: 25 }),
+      fetchGitHubIssue({ owner: 'lexicalninja', repo: 'my-little-scrum-team', number: 25 }),
     ).rejects.toThrow(
       "'gh' CLI not found. Install it from https://cli.github.com and run 'gh auth login'.",
     );
@@ -612,7 +612,7 @@ describe('error messages match user-facing strings from spec', () => {
     ]);
 
     await expect(
-      fetchGitHubIssue({ owner: 'adhocteam', repo: 'hoc-market', number: 25 }),
+      fetchGitHubIssue({ owner: 'lexicalninja', repo: 'my-little-scrum-team', number: 25 }),
     ).rejects.toThrow(
       "Not authenticated with GitHub CLI. Run 'gh auth login' first.",
     );
@@ -626,9 +626,9 @@ describe('error messages match user-facing strings from spec', () => {
     ]);
 
     await expect(
-      fetchGitHubIssue({ owner: 'adhocteam', repo: 'hoc-market', number: 9999 }),
+      fetchGitHubIssue({ owner: 'lexicalninja', repo: 'my-little-scrum-team', number: 9999 }),
     ).rejects.toThrow(
-      'GitHub issue #9999 not found in adhocteam/hoc-market.',
+      'GitHub issue #9999 not found in lexicalninja/my-little-scrum-team.',
     );
   });
 

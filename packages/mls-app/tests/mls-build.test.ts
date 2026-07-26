@@ -84,7 +84,7 @@ beforeEach(() => {
   );
   mockInferRepoFromGitRemote = vi
     .fn()
-    .mockResolvedValue({ owner: 'adhocteam', repo: 'hoc-market' });
+    .mockResolvedValue({ owner: 'lexicalninja', repo: 'my-little-scrum-team' });
   mockResolveIssueReference = vi
     .fn()
     .mockImplementation((input: string) => Promise.resolve(input));
@@ -184,7 +184,7 @@ describe('--from-issue flag', () => {
 
     expect(mockInferRepoFromGitRemote).toHaveBeenCalledOnce();
     expect(mockFetchGitHubIssue).toHaveBeenCalledWith(
-      { owner: 'adhocteam', repo: 'hoc-market', number: 25 },
+      { owner: 'lexicalninja', repo: 'my-little-scrum-team', number: 25 },
       expect.any(String),
     );
   });
@@ -456,7 +456,7 @@ describe('inline #N resolution error handling', () => {
 
     mockResolveIssueReference.mockRejectedValue(
       new MockGithubIssueError(
-        'GitHub issue #25 not found in adhocteam/hoc-market.',
+        'GitHub issue #25 not found in lexicalninja/my-little-scrum-team.',
       ),
     );
 
@@ -485,7 +485,7 @@ describe('inline #N resolution error handling', () => {
 
     mockResolveIssueReference.mockRejectedValue(
       new MockGithubIssueError(
-        'GitHub issue #25 not found in adhocteam/hoc-market.',
+        'GitHub issue #25 not found in lexicalninja/my-little-scrum-team.',
       ),
     );
 
@@ -497,7 +497,7 @@ describe('inline #N resolution error handling', () => {
 
     const fullOutput = stderrMessages.join('');
     expect(fullOutput).toContain(
-      'GitHub issue #25 not found in adhocteam/hoc-market.',
+      'GitHub issue #25 not found in lexicalninja/my-little-scrum-team.',
     );
   });
 });

@@ -85,8 +85,8 @@ export default defineConfig({
     ],
 
     footer: {
-      message: 'Built with purpose. Delivered with impact.',
-      copyright: 'Copyright © 2025 Ad Hoc'
+      message: 'Released under the MIT License.',
+      copyright: 'Copyright © 2026 Patrick Saxton'
     },
 
     search: {
@@ -95,23 +95,14 @@ export default defineConfig({
   },
   
   head: [
-    // Add Google Fonts as fallback for Proxima Nova/Sera
-    ['link', { 
-      rel: 'preconnect', 
-      href: 'https://fonts.googleapis.com' 
-    }],
-    ['link', { 
-      rel: 'preconnect', 
-      href: 'https://fonts.gstatic.com', 
-      crossorigin: '' 
-    }],
-    ['link', { 
-      href: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Source+Serif+Pro:wght@400;600&display=swap', 
-      rel: 'stylesheet' 
-    }],
-    
+    // No webfont links. This block previously pulled Inter and Source Serif Pro
+    // from Google Fonts as a stand-in for a commercial brand face. VitePress
+    // already bundles Inter locally, so that was a duplicate download plus a
+    // third-party request on every page view — awkward next to the privacy
+    // claims in reference/faq.md. The serif now falls back to Georgia.
+
     // Meta tags
-    ['meta', { name: 'theme-color', content: '#31B67B' }],
+    ['meta', { name: 'theme-color', content: '#73628a' }],
     ['meta', { property: 'og:type', content: 'website' }],
     ['meta', { property: 'og:title', content: 'MLS User Guide' }],
     ['meta', { property: 'og:description', content: 'Multi-agent orchestration for pi.dev' }]

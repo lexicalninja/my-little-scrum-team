@@ -8,7 +8,7 @@ Yes. Sprint data (specs, tasks, code reviews) is stored locally in `.mls/mls.db`
 
 Code context is sent to your configured LLM provider (Claude, ChatGPT, Google, etc.) during the build—the same as using those tools directly. You choose and control the provider.
 
-MLS doesn't track telemetry or upload data to Ad Hoc's servers.
+MLS has no telemetry and uploads nothing to the project's maintainers.
 
 ## What data leaves my machine during a build?
 
@@ -16,7 +16,7 @@ Code context and generated content are sent to your configured LLM provider (Cla
 
 Sprint state (specifications, tasks, code reviews, test results) stays locally in `.mls/mls.db`.
 
-MLS has no telemetry, no tracking, and sends nothing to Ad Hoc or third-party services. Your LLM provider choice is yours to control.
+MLS has no telemetry, no tracking, and sends nothing to the project's maintainers or any third-party service. Your LLM provider choice is yours to control.
 
 ## Does MLS work with monorepos?
 

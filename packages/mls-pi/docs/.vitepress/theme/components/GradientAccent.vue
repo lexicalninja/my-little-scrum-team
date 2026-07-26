@@ -5,7 +5,7 @@
 <script setup lang="ts">
 /**
  * GradientAccent Component
- * Displays Ad Hoc's signature gradient accent bars
+ * Displays the MLS gradient accent bars
  * 
  * Usage in markdown:
  * <GradientAccent />

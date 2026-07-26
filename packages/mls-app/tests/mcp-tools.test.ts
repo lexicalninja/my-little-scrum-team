@@ -79,7 +79,7 @@ describe('mls_build handler', () => {
   //       content to engine.build()
   describe('AC-1: fromIssue resolves via fetchGitHubIssue', () => {
     it('calls fetchGitHubIssue with the correct issue number when fromIssue is provided', async () => {
-      mockInferRepoFromGitRemote.mockResolvedValue({ owner: 'adhocteam', repo: 'hoc-market' });
+      mockInferRepoFromGitRemote.mockResolvedValue({ owner: 'lexicalninja', repo: 'my-little-scrum-team' });
       mockFetchGitHubIssue.mockResolvedValue('GitHub Issue #25: My Title\n\nBody text');
 
       const engine = makeMockEngine();
@@ -90,14 +90,14 @@ describe('mls_build handler', () => {
 
       expect(mockFetchGitHubIssue).toHaveBeenCalledOnce();
       expect(mockFetchGitHubIssue).toHaveBeenCalledWith(
-        { owner: 'adhocteam', repo: 'hoc-market', number: 25 },
+        { owner: 'lexicalninja', repo: 'my-little-scrum-team', number: 25 },
         expect.any(String),
       );
     });
 
     it('passes the resolved issue content (not the original description) to engine.build()', async () => {
       const resolvedContent = 'GitHub Issue #25: My Title\n\nBody text';
-      mockInferRepoFromGitRemote.mockResolvedValue({ owner: 'adhocteam', repo: 'hoc-market' });
+      mockInferRepoFromGitRemote.mockResolvedValue({ owner: 'lexicalninja', repo: 'my-little-scrum-team' });
       mockFetchGitHubIssue.mockResolvedValue(resolvedContent);
 
       const engine = makeMockEngine();
@@ -150,7 +150,7 @@ describe('mls_build handler', () => {
   describe('AC-3: no console.log is called during fromIssue resolution', () => {
     it('does not call console.log when fromIssue resolves successfully', async () => {
       const logSpy = vi.spyOn(console, 'log');
-      mockInferRepoFromGitRemote.mockResolvedValue({ owner: 'adhocteam', repo: 'hoc-market' });
+      mockInferRepoFromGitRemote.mockResolvedValue({ owner: 'lexicalninja', repo: 'my-little-scrum-team' });
       mockFetchGitHubIssue.mockResolvedValue('GitHub Issue #25: Title\n\nBody');
 
       const engine = makeMockEngine();
@@ -179,7 +179,7 @@ describe('mls_build handler', () => {
   // AC-4: On error, handler throws a plain Error (not calls process.exit)
   describe('AC-4: errors propagate as thrown Error, not process.exit', () => {
     it('throws an Error when fetchGitHubIssue rejects', async () => {
-      mockInferRepoFromGitRemote.mockResolvedValue({ owner: 'adhocteam', repo: 'hoc-market' });
+      mockInferRepoFromGitRemote.mockResolvedValue({ owner: 'lexicalninja', repo: 'my-little-scrum-team' });
       mockFetchGitHubIssue.mockRejectedValue(new Error("'gh' CLI not found."));
 
       const engine = makeMockEngine();
@@ -196,7 +196,7 @@ describe('mls_build handler', () => {
         throw new Error('process.exit was called');
       });
 
-      mockInferRepoFromGitRemote.mockResolvedValue({ owner: 'adhocteam', repo: 'hoc-market' });
+      mockInferRepoFromGitRemote.mockResolvedValue({ owner: 'lexicalninja', repo: 'my-little-scrum-team' });
       mockFetchGitHubIssue.mockRejectedValue(new Error("'gh' CLI not found."));
 
       const engine = makeMockEngine();

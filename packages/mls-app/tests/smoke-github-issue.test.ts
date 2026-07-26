@@ -91,7 +91,7 @@ describe('Smoke 1 — CLI --from-issue path', () => {
     // gh issue view.  (bin/mls.ts calls inferRepoFromGitRemote first for
     // --from-issue, then fetchGitHubIssue which calls gh --version / auth / view)
     stubExecFileSequence([
-      { stdout: 'https://github.com/adhocteam/hoc-market.git' }, // git remote
+      { stdout: 'https://github.com/lexicalninja/my-little-scrum-team.git' }, // git remote
       { stdout: 'gh version 2.0.0' },                            // gh --version
       { stdout: 'Logged in to github.com' },                     // gh auth status
       { stdout: ISSUE_JSON },                                     // gh issue view
@@ -197,7 +197,7 @@ describe('Smoke 2 — CLI free-text #N path', () => {
     stubExecFileSequence([
       { stdout: 'gh version 2.0.0' },                            // gh --version
       { stdout: 'Logged in to github.com' },                     // gh auth status
-      { stdout: 'https://github.com/adhocteam/hoc-market.git' }, // git remote
+      { stdout: 'https://github.com/lexicalninja/my-little-scrum-team.git' }, // git remote
       { stdout: ISSUE_JSON },                                     // gh issue view
     ]);
   });
@@ -443,7 +443,7 @@ describe('Smoke 4 — MCP mls_build with fromIssue', () => {
     // are null.  Here we pass them explicitly through fromIssue, so tools.ts
     // calls inferRepoFromGitRemote itself.  We need one more stub for that.
     stubExecFileSequence([
-      { stdout: 'https://github.com/adhocteam/hoc-market.git' }, // git remote
+      { stdout: 'https://github.com/lexicalninja/my-little-scrum-team.git' }, // git remote
       { stdout: 'gh version 2.0.0' },                            // gh --version
       { stdout: 'Logged in to github.com' },                     // gh auth status
       { stdout: ISSUE_JSON },                                     // gh issue view

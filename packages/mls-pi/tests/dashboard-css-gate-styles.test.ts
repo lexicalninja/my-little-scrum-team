@@ -160,7 +160,7 @@ describe("Dashboard CSS — gate card & aborted badge styles", () => {
     expect(abortedProps).toHaveProperty("background");
     expect(abortedProps).toHaveProperty("color");
 
-    // The review-escalated pattern uses background: #d0484830
+    // The review-escalated pattern uses a translucent --red background
     // .badge.aborted should match this pattern
     const escalatedProps = getProps(".event.review-escalated");
     expect(abortedProps["background"]).toBe(escalatedProps["background"]);
