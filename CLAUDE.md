@@ -12,32 +12,32 @@ skills/              Skill definitions (40) — SHARED, single source of truth
 commands/            Slash commands (/build, /convert-to-extension)
 templates/           SHARED: specification, task breakdown, decision record, scaffold
 .claude-plugin/      Plugin manifest and marketplace entry
-packages/mls-app/    Standalone CLI + MCP server (TypeScript)
-packages/mls-pi/     pi.dev agent-harness extension (TypeScript)
-packages/mls-vscode/ VS Code Copilot Chat participant (@mls)
+packages/mlst-app/    Standalone CLI + MCP server (TypeScript)
+packages/mlst-pi/     pi.dev agent-harness extension (TypeScript)
+packages/mlst-vscode/ VS Code Copilot Chat participant (@mlst)
 ```
 
-`skills/` and `templates/` exist exactly once. `mls-app` and `mls-pi` resolve
+`skills/` and `templates/` exist exactly once. `mlst-app` and `mlst-pi` resolve
 them from the repo root at runtime — neither carries copies. See
-`packages/mls-app/src/skills/loader.ts` and `resolveResourceDir` in
-`packages/mls-pi/.pi/extensions/mls/index.ts`.
+`packages/mlst-app/src/skills/loader.ts` and `resolveResourceDir` in
+`packages/mlst-pi/.pi/extensions/mlst/index.ts`.
 
-`mls-vscode` is the exception, and not by choice: a VS Code extension can only
+`mlst-vscode` is the exception, and not by choice: a VS Code extension can only
 read files inside its own directory, so `scripts/copy-resources.js` stages the
 shared directories into a generated, gitignored `resources/` at build time. The
 root is still the source of truth — nothing is edited in `resources/`.
 
-Package-local agents are deliberately NOT shared. `mls-pi/agents/` uses `mls-*`
+Package-local agents are deliberately NOT shared. `mlst-pi/agents/` uses `mlst-*`
 names and a `tools:` frontmatter field Claude Code doesn't have;
-`mls-vscode/agents/team-lead.md` orchestrates via that extension's slash
+`mlst-vscode/agents/team-lead.md` orchestrates via that extension's slash
 commands, which exist nowhere else. Both are overlaid on the shared set.
 
 ## The three surfaces
 
-| | Plugin (`agents/*.md`) | App (`mls-app`) | Pi (`mls-pi`) | VS Code (`mls-vscode`) |
+| | Plugin (`agents/*.md`) | App (`mlst-app`) | Pi (`mlst-pi`) | VS Code (`mlst-vscode`) |
 |---|---|---|---|---|
 | Runs in | Claude Code | Node CLI / MCP server | [pi.dev](https://pi.dev) harness | Copilot Chat |
-| Orchestration | The agent, guided by its prompt | `src/orchestrator/phases.ts` | `.pi/extensions/mls/orchestrator/` | `team-lead` agent + `/run` phase detection |
+| Orchestration | The agent, guided by its prompt | `src/orchestrator/phases.ts` | `.pi/extensions/mlst/orchestrator/` | `team-lead` agent + `/run` phase detection |
 | Skill delivery | Model-invoked by description | Always concatenated into the prompt | Always concatenated, via `AGENT_SKILLS` | Hand-picked per command |
 | State | None | `src/state/` (JSON) | SQLite (`better-sqlite3`) | Workspace files (`decisions/`, `specs/`, `tasks/`) |
 
@@ -98,17 +98,17 @@ Some prompt text is a contract with the parser, not advice:
 ## Working on the packages
 
 ```bash
-cd packages/mls-app   # or packages/mls-pi
+cd packages/mlst-app   # or packages/mlst-pi
 npm install
 npm run build
-npm test              # mls-app: 146 tests · mls-pi: 794 tests
+npm test              # mlst-app: 146 tests · mlst-pi: 794 tests
 ```
 
-Neither suite meaningfully covers resource resolution — `mls-app` mocks
+Neither suite meaningfully covers resource resolution — `mlst-app` mocks
 `loadAllSkills` outright. If you change how skills or templates resolve, verify
 against the built output directly rather than trusting a green suite.
 
-`packages/mls-pi` depends on `better-sqlite3` and (via vitest 4) on native
+`packages/mlst-pi` depends on `better-sqlite3` and (via vitest 4) on native
 rolldown bindings. If `npm test` dies with `Cannot find module
 './rolldown-binding.*.node'`, npm skipped a platform-specific optional
 dependency — delete `node_modules` *and* `package-lock.json`, then reinstall.
@@ -119,6 +119,6 @@ dependency — delete `node_modules` *and* `package-lock.json`, then reinstall.
   `agents` array lists every file explicitly) and the README.
 - Adding a skill — create `skills/<name>/SKILL.md` with `name` and
   `description` frontmatter. To expose it to the app, add it to the relevant
-  agent in `packages/mls-app/src/skills/registry.ts`; the plugin picks it up
+  agent in `packages/mlst-app/src/skills/registry.ts`; the plugin picks it up
   automatically.
 - Changing a skill — remember it feeds both surfaces.

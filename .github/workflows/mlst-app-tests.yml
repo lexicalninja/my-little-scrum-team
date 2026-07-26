@@ -1,0 +1,62 @@
+name: Test MLST App
+
+# mlst-app resolves skills/ from the repo root at runtime (src/skills/loader.ts),
+# so changes there can affect this package without touching a file inside it.
+# It does not read templates/ — nothing in src/ loads them — so that directory
+# is deliberately not a trigger.
+on:
+  push:
+    paths:
+      - 'packages/mlst-app/**'
+      - 'skills/**'
+      - '.github/workflows/mlst-app-tests.yml'
+  pull_request:
+    paths:
+      - 'packages/mlst-app/**'
+      - 'skills/**'
+      - '.github/workflows/mlst-app-tests.yml'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: packages/mlst-app/package-lock.json
+
+      - name: Install dependencies
+        working-directory: packages/mlst-app
+        run: npm ci
+
+      - name: Compile TypeScript
+        working-directory: packages/mlst-app
+        run: npm run build
+
+      - name: Run tests
+        working-directory: packages/mlst-app
+        run: npm test
+
+      # The suite mocks loadAllSkills, so a green run says nothing about whether
+      # skills actually resolve from the repo root. Check the built output.
+      - name: Verify shared skills resolve at runtime
+        working-directory: packages/mlst-app
+        run: |
+          node --input-type=module -e "
+            import { loadAllSkills } from './dist/src/skills/loader.js';
+            import { AGENT_SKILLS } from './dist/src/skills/registry.js';
+            const skills = await loadAllSkills();
+            if (skills.size === 0) {
+              throw new Error('No skills resolved from the repo root');
+            }
+            const missing = Object.entries(AGENT_SKILLS)
+              .flatMap(([agent, names]) => names.filter(n => !skills.has(n)).map(n => agent + ' -> ' + n));
+            if (missing.length) {
+              throw new Error('Skills in registry with no file: ' + missing.join(', '));
+            }
+            console.log('OK: ' + skills.size + ' skills, all registry mappings resolve');
+          "

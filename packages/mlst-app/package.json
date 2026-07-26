@@ -1,0 +1,66 @@
+{
+  "name": "@lexicalninja/mlst",
+  "version": "1.0.8",
+  "private": true,
+  "description": "Multi-agent scrum team CLI — orchestrates specialist AI agents to build software from ideas through implementation and review",
+  "type": "module",
+  "bin": {
+    "mlst": "./dist/bin/mlst.js"
+  },
+  "main": "./dist/src/index.js",
+  "types": "./dist/src/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/src/index.js",
+      "types": "./dist/src/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start": "node dist/bin/mlst.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
+  },
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lexicalninja/my-little-scrum-team",
+    "directory": "packages/mlst-app"
+  },
+  "keywords": [
+    "ai",
+    "agents",
+    "scrum",
+    "multi-agent",
+    "cli",
+    "mcp"
+  ],
+  "author": {
+    "name": "lexicalninja",
+    "email": "lexicalninja@gmail.com"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "ai": "^4.3.0",
+    "@ai-sdk/openai": "^1.3.0",
+    "@modelcontextprotocol/sdk": "^1.12.0",
+    "zod": "^3.24.0",
+    "commander": "^13.1.0",
+    "chalk": "^5.4.0",
+    "glob": "^13.0.0",
+    "gray-matter": "^4.0.3"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0",
+    "vitest": "^3.1.0",
+    "@types/node": "^22.0.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

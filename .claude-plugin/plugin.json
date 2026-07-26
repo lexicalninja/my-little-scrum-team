@@ -1,5 +1,5 @@
 {
-  "name": "mls",
+  "name": "mlst",
   "description": "A collection of AI agents and skills that work together as a coordinated scrum team. The /build command orchestrates specialist agents (specification writer, scrum master, UI/UX designer, implementation engineer, infrastructure engineer, test runner, and code reviewer) directly from the main conversation, plus 39 reusable skills and commands for development workflows.",
   "version": "2.0.2",
   "author": {

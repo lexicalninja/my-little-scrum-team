@@ -1,0 +1,49 @@
+name: Test MLST VS Code Extension
+
+# The extension stages agents/, skills/, templates/ and commands/ from the repo
+# root at build time, and tests/resources.test.ts asserts every name the source
+# asks for still resolves. A rename at the root breaks this package without
+# touching a file inside it, so the shared directories trigger this run too.
+on:
+  push:
+    paths:
+      - 'packages/mlst-vscode/**'
+      - 'agents/**'
+      - 'skills/**'
+      - 'templates/**'
+      - 'commands/**'
+      - '.github/workflows/mlst-vscode-tests.yml'
+  pull_request:
+    paths:
+      - 'packages/mlst-vscode/**'
+      - 'agents/**'
+      - 'skills/**'
+      - 'templates/**'
+      - 'commands/**'
+      - '.github/workflows/mlst-vscode-tests.yml'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: packages/mlst-vscode/package-lock.json
+
+      - name: Install dependencies
+        working-directory: packages/mlst-vscode
+        run: npm ci
+
+      # Stages resources/ and type-checks against them.
+      - name: Compile TypeScript
+        working-directory: packages/mlst-vscode
+        run: npm run compile
+
+      - name: Run tests
+        working-directory: packages/mlst-vscode
+        run: npm test

@@ -1,12 +1,12 @@
-name: Deploy MLS Docs to GitHub Pages
+name: Deploy MLST Docs to GitHub Pages
 
 on:
   push:
     branches: [main]
     paths:
-      - 'packages/mls-pi/docs/**'
-      - 'packages/mls-pi/package.json'
-      - 'packages/mls-pi/package-lock.json'
+      - 'packages/mlst-pi/docs/**'
+      - 'packages/mlst-pi/package.json'
+      - 'packages/mlst-pi/package-lock.json'
       - '.github/workflows/deploy-docs.yml'
   workflow_dispatch:
 
@@ -34,38 +34,38 @@ jobs:
         with:
           node-version: 20
           cache: npm
-          cache-dependency-path: packages/mls-pi/package-lock.json
+          cache-dependency-path: packages/mlst-pi/package-lock.json
 
       - name: Setup Pages
         uses: actions/configure-pages@v6
 
       - name: Install dependencies
         run: npm ci
-        working-directory: packages/mls-pi
+        working-directory: packages/mlst-pi
 
       - name: Build docs
         run: npm run docs:build
-        working-directory: packages/mls-pi
+        working-directory: packages/mlst-pi
 
       # Pages maps the artifact root to /my-little-scrum-team/, so the site has
-      # to live in an `mls-pi/` directory to be served at
-      # /my-little-scrum-team/mls-pi/. This must match `base` in
-      # packages/mls-pi/docs/.vitepress/config.ts.
-      - name: Stage site under /mls-pi/
+      # to live in an `mlst-pi/` directory to be served at
+      # /my-little-scrum-team/mlst-pi/. This must match `base` in
+      # packages/mlst-pi/docs/.vitepress/config.ts.
+      - name: Stage site under /mlst-pi/
         run: |
           set -euo pipefail
-          mkdir -p _site/mls-pi
-          cp -R packages/mls-pi/docs/.vitepress/dist/. _site/mls-pi/
+          mkdir -p _site/mlst-pi
+          cp -R packages/mlst-pi/docs/.vitepress/dist/. _site/mlst-pi/
           # Redirect the Pages root to the docs rather than serving a bare 404.
           cat > _site/index.html <<'HTML'
           <!doctype html>
           <meta charset="utf-8">
           <title>My Little Scrum Team</title>
-          <meta http-equiv="refresh" content="0; url=./mls-pi/">
-          <link rel="canonical" href="./mls-pi/">
-          <p><a href="./mls-pi/">My Little Scrum Team documentation</a></p>
+          <meta http-equiv="refresh" content="0; url=./mlst-pi/">
+          <link rel="canonical" href="./mlst-pi/">
+          <p><a href="./mlst-pi/">My Little Scrum Team documentation</a></p>
           HTML
-          test -f _site/mls-pi/index.html
+          test -f _site/mlst-pi/index.html
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v5
