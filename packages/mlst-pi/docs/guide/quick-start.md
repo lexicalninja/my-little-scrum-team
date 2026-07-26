@@ -56,7 +56,7 @@ Only available in one repo:
 ```bash
 cd /your/project
 mkdir -p .pi/extensions
-ln -s /path/to/my-little-scrum-team-pi/.pi/extensions/mlst .pi/extensions/mlst
+ln -s /path/to/my-little-scrum-team/packages/mlst-pi/.pi/extensions/mlst .pi/extensions/mlst
 ```
 
 ## 5. Verify Installation

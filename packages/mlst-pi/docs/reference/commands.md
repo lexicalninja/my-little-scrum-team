@@ -47,6 +47,29 @@ Run a full MLST sprint.
 
 ---
 
+## /prd
+
+Run an interactive planning session that produces a PRD (product requirements
+document), ready to hand to `/build`.
+
+### Syntax
+
+```
+/prd <idea>
+```
+
+### Example
+
+```
+/prd a CLI tool that syncs bookmarks between browsers
+```
+
+The session asks clarifying questions and iterates on scope with you, then
+writes out a PRD. Feed the result to `/build` (directly, or via a file path /
+`@file` reference).
+
+---
+
 ## /mlst-status
 
 Show current sprint status.
@@ -75,7 +98,7 @@ Cost: $0.24 so far
 
 ## Global Flags
 
-Both commands inherit pi's global flags. Common ones:
+All commands inherit pi's global flags. Common ones:
 
 ```
 pi --help                        Show all commands

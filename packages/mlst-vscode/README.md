@@ -30,32 +30,37 @@ Or use `/run` to let the team lead auto-detect where you are and route according
 - VS Code 1.93.0+
 - GitHub Copilot (or another VS Code Language Model provider)
 
-### Install from GitHub Releases
+### Install from source
 
-1. Go to the [latest release](https://github.com/lexicalninja/my-little-scrum-team/releases).
-2. Under **Assets**, download the `.vsix` file.
-3. Install in VS Code:
-   - **VS Code UI:** Extensions view (`⇧⌘X`) → `···` menu → Install from VSIX…
-   - **Command Palette:** `⇧⌘P` → "Extensions: Install from VSIX…"
-   - **CLI:** `code --install-extension my-little-scrum-team-0.0.1.vsix`
-4. Reload VS Code.
-5. Open Copilot Chat and type `@mlst`.
+There are no packaged releases yet — build the `.vsix` yourself:
+
+```bash
+cd packages/mlst-vscode
+npm install
+npm run compile                  # stages resources/ from the repo root, then tsc
+npx @vscode/vsce package         # produces my-little-scrum-team-<version>.vsix
+```
+
+Then install it:
+- **VS Code UI:** Extensions view (`⇧⌘X`) → `···` menu → Install from VSIX…
+- **Command Palette:** `⇧⌘P` → "Extensions: Install from VSIX…"
+- **CLI:** `code --install-extension my-little-scrum-team-<version>.vsix`
+
+Reload VS Code, open Copilot Chat, and type `@mlst`.
 
 ## Development
 
 ```bash
-cd plugins/my-little-scrum-team-extension
+cd packages/mlst-vscode
 npm install
 npm run compile
+npm test          # vitest — resource integrity, loaders, command wiring
 ```
 
-Press `F5` from the repo root to launch the Extension Development Host.
+Press `F5` to launch the Extension Development Host.
 
-## Releasing
-
-Tag a commit with `my-little-scrum-team-extension/v<version>` to trigger the GitHub Actions release workflow:
-
-```bash
-git tag my-little-scrum-team-extension/v0.0.1
-git push origin my-little-scrum-team-extension/v0.0.1
-```
+Note: the agents, skills, templates, and commands the extension uses at runtime
+are **staged, not authored, here** — `scripts/copy-resources.js` copies them
+from the repo root into the gitignored `resources/` directory on every compile.
+Edit the shared files at the repo root (or the package-local
+`agents/team-lead.md`), never the staged copies.

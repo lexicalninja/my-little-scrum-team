@@ -143,9 +143,11 @@ See [docs/github-issues.md](./docs/github-issues.md) for the full reference, inc
 
 ### Option 2: MCP Server (Claude Code integration)
 
-Run MLST as an MCP server so Claude Code can call it as a tool. No local clone needed — `npx` pulls the package directly from GitHub Packages.
+Run MLST as an MCP server so Claude Code can call it as a tool. This assumes
+you've installed from source and run `npm link` (see above) — the package is
+not published to a registry.
 
-#### Via npx (no local install)
+#### Via the linked `mlst` binary
 
 Project-level — add to `.claude/mcp.json` in your project root:
 
@@ -273,25 +275,6 @@ Available models on GitHub Models: `gpt-4o`, `gpt-4o-mini`, `gpt-4.1`, `gpt-4.1-
 | infrastructure-engineer | gpt-4o |
 | code-reviewer | gpt-4o |
 | idea-refinement | gpt-4o |
-
-## Publishing
-
-MLST is published to GitHub Packages via a GitHub Actions workflow. To release a new version:
-
-```bash
-# 1. Update version in mlst-app/package.json
-cd mlst-app
-npm version patch  # or minor, major
-
-# 2. Tag and push
-git tag "mlst-app/v$(node -p 'require("./package.json").version')"
-git push origin --tags
-```
-
-The workflow at `.github/workflows/publish-mlst.yml` will automatically:
-1. Run tests
-2. Build the TypeScript
-3. Publish to GitHub Packages
 
 ## Development
 

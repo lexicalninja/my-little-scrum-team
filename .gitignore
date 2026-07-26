@@ -6,6 +6,12 @@ dist/
 out/
 *.tsbuildinfo
 
+# Generated at build time by packages/mlst-vscode/scripts/copy-resources.js.
+# The package's own .gitignore also covers this, but that file disappears when
+# checking out any commit that predates the package, leaving the generated
+# files exposed to a stray `git add` — this root rule is the backstop.
+packages/mlst-vscode/resources/
+
 # Test coverage
 coverage/
 

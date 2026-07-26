@@ -27,9 +27,10 @@ Each extension exports a function from its `index.ts` that receives Pi's extensi
 
 ## What This Extension Does
 
-MLST adds two commands to pi:
+MLST adds three commands to pi:
 
 - **`/build <description>`** — Takes a natural language description and runs a full software development lifecycle: specification, task breakdown, implementation, testing, code review, and iteration.
+- **`/prd <idea>`** — Runs an interactive planning session that produces a PRD, ready to hand to `/build`.
 - **`/mlst-status`** — Shows the current sprint status from the local database.
 
 One command kicks off the entire workflow. You describe what you want, and MLST coordinates 7 specialist agents through 5 phases to deliver it.
@@ -219,7 +220,13 @@ This is useful when you want MLST-specific model defaults or when the built-in p
 
 ## Skills
 
-Skills are reusable prompt instructions loaded from `skills/*/SKILL.md`. Each agent receives only the skills mapped to it, appended to its system prompt at spawn time.
+Skills are reusable prompt instructions loaded from the **repo root's shared
+`skills/` directory** — this package carries no copies of its own. The loader
+checks the installed extension first, then the package, then the repo root
+(`resolveResourceDir` in `index.ts`), and the installer bakes the shared
+skills into the installed extension so it stays self-contained. Each agent
+receives only the skills mapped to it, appended to its system prompt at spawn
+time.
 
 | Skill | Injected Into | Mechanism | Purpose |
 |-------|---------------|-----------|---------|
@@ -294,20 +301,20 @@ The extension is split across two layers: **TypeScript source** (the runtime) an
 ### File map
 
 ```
-my-little-scrum-team-pi/
+packages/mlst-pi/
 ├── .pi/extensions/mlst/                  # Extension source (TypeScript)
-│   ├── index.ts                         # Command registration (/build, /mlst-status),
+│   ├── index.ts                         # Command registration (/build, /prd, /mlst-status),
 │   │                                    # input parsing (@file refs, GitHub issue refs),
-│   │                                    # tool blocking (edit/write disabled),
-│   │                                    # context compaction hook
-│   ├── orchestrator.ts                  # 5-phase workflow engine: phase0()–phase4(),
-│   │                                    # task-to-agent routing (mapTypeToAgent),
-│   │                                    # review loop (runReview), test/lint execution,
-│   │                                    # LLM-based gate evaluation prompts
+│   │                                    # resource resolution (resolveResourceDir),
+│   │                                    # tool blocking, context compaction hook
+│   ├── orchestrator/                    # 5-phase workflow engine: phase0()–phase4(),
+│   │                                    # task-to-agent routing, review loop,
+│   │                                    # test/lint execution, gate evaluation
 │   ├── agents.ts                        # Agent subprocess spawning (spawnAgent),
 │   │                                    # parallel execution, provider profiles
 │   │                                    # (DEFAULT_PROVIDER_PROFILES), RateThrottle,
 │   │                                    # per-project config loading (loadProviderProfile)
+│   ├── prd.ts                           # /prd interactive planning session
 │   ├── quality-gates.ts                 # Deterministic validation: taskBreakdownValid(),
 │   │                                    # testsPass()
 │   ├── context.ts                       # Prompt assembly per phase: buildSpecPrompt(),
@@ -317,18 +324,20 @@ my-little-scrum-team-pi/
 │   ├── state.ts                         # StateManager — sprint state + UI sync
 │   ├── db.ts                            # SQLite schema (SCHEMA constant), MlstDatabase class
 │   ├── llm.ts                           # Direct LLM calls via pi subprocess
-│   ├── skills.ts                        # Skill loader — reads skills/*/SKILL.md,
+│   ├── skills.ts                        # Skill loader — reads SKILL.md files,
 │   │                                    # injects into agent prompts via AGENT_SKILLS
 │   ├── dashboard.ts                     # SSE server on :4242, JSONL run logging
 │   └── dashboard-ui/                    # Alpine.js frontend: UI, test output parsers
 ├── agents/                              # Agent system prompts (7 markdown files with
 │                                        # YAML frontmatter: name, tools, model)
-├── skills/                              # Reusable prompt instructions (SKILL.md per skill)
-├── templates/                           # Output format templates (specification, tasks)
 ├── scripts/
-│   └── install.js                       # Installer — copies or symlinks to ~/.pi
+│   └── install.js                       # Installer — copies or symlinks to ~/.pi,
+│                                        # bakes in shared skills/templates from repo root
 ├── package.json                         # Dependencies (better-sqlite3, TypeScript)
 └── tsconfig.json                        # ES2022 target, strict mode
+
+(skills/ and templates/ live at the REPO ROOT, shared with every surface —
+this package deliberately carries no copies.)
 ```
 
 ### How the pieces connect
@@ -359,7 +368,7 @@ index.ts
 Each `spawnAgent()` call:
 1. Waits for `RateThrottle` pacing
 2. Loads the agent prompt from `agents/*.md`
-3. Appends skills from `skills/*/SKILL.md` (via `AGENT_SKILLS` mapping)
+3. Appends the shared skills mapped to it in `AGENT_SKILLS` (resolved from the repo root `skills/`)
 4. Spawns a `pi` subprocess with `--no-extensions`
 5. Streams events back to the dashboard via `MlstEvent` emissions
 
@@ -397,7 +406,7 @@ This symlinks instead of copying, so edits to the source are picked up without r
 **Manual symlink** (global):
 
 ```bash
-ln -s /absolute/path/to/my-little-scrum-team-pi/.pi/extensions/mlst ~/.pi/agent/extensions/mlst
+ln -s /absolute/path/to/my-little-scrum-team/packages/mlst-pi/.pi/extensions/mlst ~/.pi/agent/extensions/mlst
 ```
 
 **Project-local** (only available in one repo):
@@ -405,12 +414,12 @@ ln -s /absolute/path/to/my-little-scrum-team-pi/.pi/extensions/mlst ~/.pi/agent/
 ```bash
 cd /your/project
 mkdir -p .pi/extensions
-ln -s /absolute/path/to/my-little-scrum-team-pi/.pi/extensions/mlst .pi/extensions/mlst
+ln -s /absolute/path/to/my-little-scrum-team/packages/mlst-pi/.pi/extensions/mlst .pi/extensions/mlst
 ```
 
 ### 3. Verify
 
-Start pi in any project. You should see `/build` and `/mlst-status` available as commands.
+Start pi in any project. You should see `/build`, `/prd`, and `/mlst-status` available as commands.
 
 ### Uninstall
 
@@ -582,11 +591,13 @@ Output goes to `out/`.
    ---
    ```
 2. Write the system prompt in the markdown body
-3. Reference the agent name in `orchestrator.ts` where it should be spawned
+3. Reference the agent name in `orchestrator/` where it should be spawned
 
 ### Adding a skill
 
-1. Create `skills/your-skill-name/SKILL.md`
+1. Create `skills/your-skill-name/SKILL.md` **at the repo root** — skills are
+   shared, so the new skill is also visible to the Claude Code plugin, the CLI,
+   and the VS Code extension
 2. Map it to an agent in `AGENT_SKILLS` in `types.ts`
 3. It will be automatically loaded and injected at spawn time
 
